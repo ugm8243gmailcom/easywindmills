@@ -1,0 +1,23 @@
+{
+  "name": "easywindmill",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "postinstall": "node -e \"const f='node_modules/rollup/dist/native.js'; if(require('fs').existsSync(f)){let c=require('fs').readFileSync(f,'utf8'); if(!c.includes('@rollup/wasm-node/dist/native.js')){c=c.replace('return require(id);\\n\\t} catch (error) {','return require(id);\\n\\t} catch (error) {\\n\\t\\ttry { return require(\\'@rollup/wasm-node/dist/native.js\\'); } catch {}'); require('fs').writeFileSync(f,c);}}\""
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@rollup/wasm-node": "^4.34.8",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.2.0"
+  }
+}
