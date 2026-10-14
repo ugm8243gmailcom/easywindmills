@@ -14,9 +14,9 @@ export const MEDIA_CONFIG = {
   // Descriptive alt text for accessibility
   altText: 'Wind turbines rotating along layered mountain ridges under a soft sky',
 
-  // Tagline
-  headline: 'Windmills made easy',
+  // Headline
+  headline: 'Utility Wind Turbine Engineering & Mechanics',
 
-  // Short supporting line
-  subline: 'An educational exploration of wind turbine technology and clean energy.'
+  // Clear technical description
+  subline: 'An interactive technical breakdown of how multi-megawatt aerodynamic rotors, mechanical drivetrains, and generators convert kinetic wind energy into utility-scale electrical grid power.'
 };

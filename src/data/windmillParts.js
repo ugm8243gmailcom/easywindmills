@@ -16,8 +16,8 @@ export const WINDMILL_PARTS = [
     description:
       'The aerodynamic rotor converts kinetic energy from wind streams into mechanical rotation. It consists of three fiberglass/carbon composite blades secured to a central cast-iron hub. Each blade profile is shaped like an aircraft aerofoil to produce aerodynamic lift rather than pure drag.',
     specs: [
-      { label: 'Rotor Diameter', value: '115 – 130 m' },
-      { label: 'Rotation Speed', value: '8 – 18 RPM' },
+      { label: 'Rotor Diameter', value: '115-130 m' },
+      { label: 'Rotation Speed', value: '8-18 RPM' },
       { label: 'Blade Material', value: 'Glass/Carbon Hybrid Epoxy' },
       { label: 'Pitch Range', value: '0° to 90° (Feathered)' }
     ],
@@ -56,7 +56,7 @@ export const WINDMILL_PARTS = [
     description:
       'The electromagnetic generator converts rotational mechanical power into three-phase alternating current (AC). A compact multi-stage planetary gearbox matches rotor RPM to the optimum generator speed, where permanent neodymium magnets generate electric current through heavy copper stator windings.',
     specs: [
-      { label: 'Rated Power', value: '3.2 – 4.0 MW' },
+      { label: 'Rated Power', value: '3.2-4.0 MW' },
       { label: 'Output Voltage', value: '690 V (3-Phase AC)' },
       { label: 'Generator Type', value: 'Permanent Magnet Synchronous' },
       { label: 'Efficiency', value: '> 97.6% at rated load' }
