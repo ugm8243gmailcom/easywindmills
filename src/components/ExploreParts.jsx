@@ -17,7 +17,6 @@ export default function ExploreParts() {
   const [isPreloaded, setIsPreloaded] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [playbackDirection, setPlaybackDirection] = useState('forward'); // 'forward' | 'reverse'
   const [selectedPart, setSelectedPart] = useState(null);
   const [hoveredPart, setHoveredPart] = useState(null);
 
@@ -108,7 +107,6 @@ export default function ExploreParts() {
     // Reset zoom if currently zoomed
     setSelectedPart(null);
     setIsPlaying(true);
-    setPlaybackDirection(direction);
     lastTimeRef.current = performance.now();
 
     const step = (timestamp) => {
@@ -144,56 +142,27 @@ export default function ExploreParts() {
     animFrameIdRef.current = requestAnimationFrame(step);
   }, []);
 
-  // Stop any active animation
-  const pausePlayback = useCallback(() => {
-    if (animFrameIdRef.current) {
-      cancelAnimationFrame(animFrameIdRef.current);
-      animFrameIdRef.current = null;
-    }
-    setIsPlaying(false);
-  }, []);
-
   // User triggers "Explore Parts" initial explosion
   const handleExploreClick = () => {
     setHasStarted(true);
     startPlayback(TOTAL_FRAMES, 'forward');
   };
 
-  // Re-collapse back to frame 1
-  const handleCollapse = () => {
+  // Re-collapse back to assembled state
+  const handleAssemble = () => {
     setSelectedPart(null);
     startPlayback(1, 'reverse');
   };
 
-  // Re-explode to frame 50
+  // Re-explode to exploded state
   const handleExplode = () => {
     setSelectedPart(null);
     startPlayback(TOTAL_FRAMES, 'forward');
   };
 
-  // Toggle play/pause
-  const handleTogglePlay = () => {
-    if (isPlaying) {
-      pausePlayback();
-    } else {
-      if (currentFrame >= TOTAL_FRAMES) {
-        // If at end, rewind and play again, or reverse
-        startPlayback(1, 'reverse');
-      } else {
-        startPlayback(TOTAL_FRAMES, 'forward');
-      }
-    }
-  };
-
-  // Scrub slider change
-  const handleScrubChange = (e) => {
-    pausePlayback();
+  // Reset view to overview
+  const handleResetView = () => {
     setSelectedPart(null);
-    const frame = parseInt(e.target.value, 10);
-    setCurrentFrame(frame);
-    if (frame > 1) {
-      setHasStarted(true);
-    }
   };
 
   // Select a hotspot / part
@@ -221,44 +190,45 @@ export default function ExploreParts() {
     setSelectedPart(WINDMILL_PARTS[nextIndex]);
   };
 
-  // Hotspots are fully visible when currentFrame === 50
+  // Hotspots are fully visible when exploded
   const isExploded = currentFrame === TOTAL_FRAMES;
+  const isAssembled = currentFrame === 1;
   const showHotspots = isExploded && !isPlaying;
 
   return (
-    <section className="explore-section" id="explore" aria-label="Interactive Windmill Exploration">
+    <section className="explore-section" id="explore" aria-label="Interactive Wind Turbine Exploration">
       <div className="content-container">
         {/* Section Header */}
         <div className="explore-header">
           <div className="explore-eyebrow">
             <span className="eyebrow-dot" />
-            <span>INTERACTIVE 3D ANATOMY</span>
+            <span>INTERACTIVE COMPONENT INSPECTION</span>
           </div>
-          <h2 className="explore-title">Explore Windmill Parts</h2>
+          <h2 className="explore-title">Turbine Component Anatomy</h2>
           <p className="explore-subtitle">
-            Witness the internal engineering of a multi-megawatt wind turbine. Scrub through the 50-frame 
-            explosion sequence or click key separated components to inspect their mechanical role.
+            Inspect the internal mechanical, electrical, and structural subsystems of a horizontal-axis wind turbine 
+            equipped with a parallel-shaft geared drivetrain and synchronous generator.
           </p>
         </div>
 
         {/* Main Interactive Stage Card */}
         <div className="explore-stage-card" ref={stageRef}>
-          {/* Top Status & Quick Pill Bar */}
+          {/* Top Status & Quick Subassembly Navigation Bar */}
           <div className="stage-top-bar">
             <div className="stage-status-indicator">
               <span className={`status-pill ${isExploded ? 'status-pill--active' : ''}`}>
                 <span className="status-dot" />
                 {isExploded
-                  ? 'Exploded View • Hotspots Active'
+                  ? 'Exploded View: Subassemblies Separated'
                   : isPlaying
-                  ? `Expanding Components... Frame ${currentFrame}/${TOTAL_FRAMES}`
-                  : `Frame ${currentFrame} of ${TOTAL_FRAMES} (Scrub to 50)`}
+                  ? 'Transitioning Subassemblies...'
+                  : 'Assembled Turbine: Ready for Inspection'}
               </span>
             </div>
 
-            {/* Quick Part Pills (active when exploded) */}
+            {/* Quick Part Navigation Buttons (active when exploded) */}
             {isExploded && (
-              <div className="stage-part-pills" role="tablist" aria-label="Exploded turbine components">
+              <div className="stage-part-pills" role="tablist" aria-label="Exploded turbine subassemblies">
                 {WINDMILL_PARTS.map((part) => (
                   <button
                     key={part.id}
@@ -279,7 +249,7 @@ export default function ExploreParts() {
 
           {/* Viewport Box (Maintains 16:9 Aspect Ratio) */}
           <div className="stage-viewport">
-            {/* Zoomable Container Layer - Uses smooth CSS transition: transform 0.5s ease */}
+            {/* Zoomable Container Layer */}
             <div
               className={`stage-zoom-layer ${selectedPart ? 'is-zoomed' : ''}`}
               style={{
@@ -289,19 +259,18 @@ export default function ExploreParts() {
                 transform: selectedPart ? `scale(${selectedPart.zoom.scale})` : 'scale(1)'
               }}
               onClick={(e) => {
-                // If clicked on empty stage while zoomed, reset zoom
                 if (selectedPart && e.target === e.currentTarget) {
                   setSelectedPart(null);
                 }
               }}
             >
-              {/* HTML5 Canvas for performant frame scrubbing */}
+              {/* HTML5 Canvas for performant frame playback */}
               <canvas
                 ref={canvasRef}
                 width={1280}
                 height={720}
                 className="explore-canvas"
-                aria-label="3D Windmill Explosion Animation Frame"
+                aria-label="Wind Turbine Component Anatomy Viewport"
               />
 
               {/* Hotspots Overlay (Absolute coordinates on top of canvas) */}
@@ -334,21 +303,19 @@ export default function ExploreParts() {
                       aria-label={`Examine ${part.name}`}
                       tabIndex={showHotspots ? 0 : -1}
                     >
-                      {/* Outer animated radar pulse ring */}
+                      {/* Outer pulse indicator */}
                       <span className="hotspot-pulse-ring" aria-hidden="true" />
-                      <span className="hotspot-pulse-ring-2" aria-hidden="true" />
 
                       {/* Center Beacon Pin */}
                       <span className="hotspot-beacon">
-                        <span className="hotspot-beacon-core" />
                         <span className="hotspot-beacon-number">{part.number}</span>
                       </span>
 
-                      {/* Tooltip Label Badge (Scales in on hover or select) */}
+                      {/* Tooltip Label Badge */}
                       <span className="hotspot-label-badge">
                         <span className="label-category">{part.category}</span>
                         <span className="label-name">{part.name}</span>
-                        <span className="label-action">Click to zoom in →</span>
+                        <span className="label-action">Click to inspect</span>
                       </span>
                     </button>
                   );
@@ -356,42 +323,36 @@ export default function ExploreParts() {
               </div>
             </div>
 
-            {/* INITIAL STATE OVERLAY: "Explore Parts" CTA */}
-            {!hasStarted && currentFrame === 1 && (
+            {/* INITIAL STATE OVERLAY: Clear Call-to-Action to begin exploration */}
+            {!hasStarted && isAssembled && (
               <div className="initial-overlay">
                 <div className="initial-overlay-backdrop" />
                 <div className="initial-card">
                   <div className="initial-badge">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <path
-                        d="M12 2L15 9L22 12L15 15L12 22L9 15L2 12L9 9L12 2Z"
-                        fill="currentColor"
-                      />
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <circle cx="12" cy="12" r="3" />
+                      <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
                     </svg>
-                    <span>Full Turbine Disassembly</span>
+                    <span>Component Disassembly</span>
                   </div>
                   <h3 className="initial-title">Internal Turbine Mechanics</h3>
                   <p className="initial-description">
-                    Click below to trigger the 50-frame exploded view sequence and interact with the
-                    separated rotor, shaft, generator, yaw drive, and nacelle housing.
+                    Separate the turbine into its key aerodynamic, mechanical drivetrain, electrical generation, 
+                    and structural subassemblies for detailed technical inspection.
                   </p>
 
                   <button
                     type="button"
                     className="explore-cta-btn"
                     onClick={handleExploreClick}
-                    aria-label="Start Turbine Explosion Animation"
+                    aria-label="Start Turbine Component Separation"
                   >
                     <span className="cta-icon-wrapper">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path
-                          d="M5 3L19 12L5 21V3Z"
-                          fill="currentColor"
-                        />
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                        <path d="M5 12H19M19 12L12 5M19 12L12 19" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </span>
                     <span className="cta-text">Explore Parts</span>
-                    <span className="cta-badge">50 Frames</span>
                   </button>
 
                   {!isPreloaded && (
@@ -402,14 +363,14 @@ export default function ExploreParts() {
                           style={{ width: `${loadProgress}%` }}
                         />
                       </div>
-                      <span className="preload-text">Preloading 3D frames ({loadProgress}%)</span>
+                      <span className="preload-text">Loading technical visual assets ({loadProgress}%)</span>
                     </div>
                   )}
                 </div>
               </div>
             )}
 
-            {/* DESCRIPTIVE MODAL / SIDE-PANEL (Zoom & Describe State) */}
+            {/* SIDE INFORMATION DRAWER (Light Theme, verified data, credible references) */}
             {selectedPart && (
               <aside
                 className="part-details-drawer"
@@ -425,16 +386,11 @@ export default function ExploreParts() {
                     type="button"
                     className="drawer-close-btn"
                     onClick={() => setSelectedPart(null)}
-                    aria-label="Close details and reset view"
-                    title="Reset View (Esc)"
+                    aria-label="Close details panel"
+                    title="Close (Esc)"
                   >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <path
-                        d="M18 6L6 18M6 6L18 18"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <path d="M18 6L6 18M6 6L18 18" strokeLinecap="round" />
                     </svg>
                   </button>
                 </div>
@@ -448,9 +404,25 @@ export default function ExploreParts() {
 
                   <p className="drawer-description">{selectedPart.description}</p>
 
-                  {/* Technical Specifications Matrix */}
+                  {/* Role in this specific configuration */}
+                  {selectedPart.roleInConfig && (
+                    <div className="drawer-context-box">
+                      <h4 className="context-title">Role in Geared Synchronous Configuration</h4>
+                      <p className="context-text">{selectedPart.roleInConfig}</p>
+                    </div>
+                  )}
+
+                  {/* Relationship to adjacent components */}
+                  {selectedPart.adjacentComponents && (
+                    <div className="drawer-context-box">
+                      <h4 className="context-title">Adjacent Mechanical Interfaces</h4>
+                      <p className="context-text">{selectedPart.adjacentComponents}</p>
+                    </div>
+                  )}
+
+                  {/* Verified Technical Characteristics Matrix */}
                   <div className="drawer-specs-section">
-                    <h4 className="specs-section-title">Technical Specifications</h4>
+                    <h4 className="specs-section-title">Technical Design Characteristics</h4>
                     <div className="specs-grid">
                       {selectedPart.specs.map((spec, i) => (
                         <div key={i} className="spec-item">
@@ -461,17 +433,36 @@ export default function ExploreParts() {
                     </div>
                   </div>
 
-                  {/* Operational Mechanism */}
+                  {/* Operational Dynamics */}
                   <div className="drawer-mechanism-box">
                     <h4 className="mechanism-title">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
-                        <path d="M12 7V12L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M12 7V12L15 15" strokeLinecap="round" />
                       </svg>
                       Operational Dynamics
                     </h4>
                     <p className="mechanism-text">{selectedPart.mechanism}</p>
                   </div>
+
+                  {/* Verified External Reference Link */}
+                  {selectedPart.reference && (
+                    <div className="drawer-reference-box">
+                      <div className="ref-source-tag">{selectedPart.reference.source}</div>
+                      <h4 className="ref-title">{selectedPart.reference.title}</h4>
+                      <a
+                        href={selectedPart.reference.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="drawer-reference-link"
+                      >
+                        <span>{selectedPart.reference.label}</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </a>
+                    </div>
+                  )}
                 </div>
 
                 {/* Drawer Footer Controls */}
@@ -481,34 +472,26 @@ export default function ExploreParts() {
                       type="button"
                       className="tour-btn"
                       onClick={handlePrevPart}
-                      aria-label="Previous component"
-                      title="Inspect Previous Part"
+                      aria-label="Inspect previous component"
                     >
                       ← Prev
                     </button>
                     <button
                       type="button"
                       className="reset-view-btn"
-                      onClick={() => setSelectedPart(null)}
-                      aria-label="Reset view to fully exploded overview"
+                      onClick={handleResetView}
+                      aria-label="Reset zoom view"
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path
-                          d="M15 3H21V9M9 21H3V15M21 3L14 10M3 21L10 14"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                        <path d="M15 3H21V9M9 21H3V15M21 3L14 10M3 21L10 14" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
-                      Reset View
+                      Overview
                     </button>
                     <button
                       type="button"
                       className="tour-btn"
                       onClick={handleNextPart}
-                      aria-label="Next component"
-                      title="Inspect Next Part"
+                      aria-label="Inspect next component"
                     >
                       Next →
                     </button>
@@ -518,36 +501,16 @@ export default function ExploreParts() {
             )}
           </div>
 
-          {/* Bottom Interactive Playback & Scrubber Controls */}
+          {/* Bottom Interactive Controls Bar (Clean User-Facing Controls, No Frame Scrubbers) */}
           <div className="stage-controls-bar">
-            {/* Play / Pause / Replay Buttons */}
             <div className="controls-left">
               <button
                 type="button"
-                className={`control-btn play-btn ${isPlaying ? 'playing' : ''}`}
-                onClick={handleTogglePlay}
-                aria-label={isPlaying ? 'Pause frame sequence' : 'Play explosion sequence'}
-                title={isPlaying ? 'Pause' : 'Play / Rewind'}
-              >
-                {isPlaying ? (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <rect x="6" y="4" width="4" height="16" rx="1" />
-                    <rect x="14" y="4" width="4" height="16" rx="1" />
-                  </svg>
-                ) : (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M6 4L19 12L6 20V4Z" />
-                  </svg>
-                )}
-              </button>
-
-              <button
-                type="button"
                 className="control-btn"
-                onClick={handleCollapse}
-                disabled={currentFrame === 1 && !isPlaying}
-                aria-label="Assemble turbine back to frame 1"
-                title="Assemble Turbine (Frame 1)"
+                onClick={handleAssemble}
+                disabled={isAssembled && !isPlaying}
+                aria-label="Assemble turbine"
+                title="Assemble Turbine"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M19 12H5M5 12L12 19M5 12L12 5" strokeLinecap="round" strokeLinejoin="round" />
@@ -559,9 +522,9 @@ export default function ExploreParts() {
                 type="button"
                 className="control-btn"
                 onClick={handleExplode}
-                disabled={currentFrame === TOTAL_FRAMES && !isPlaying}
-                aria-label="Explode turbine to frame 50"
-                title="Explode Turbine (Frame 50)"
+                disabled={isExploded && !isPlaying}
+                aria-label="Explode turbine to separate components"
+                title="Explode Components"
               >
                 <span>Explode</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -570,34 +533,30 @@ export default function ExploreParts() {
               </button>
             </div>
 
-            {/* Interactive Timeline Scrubber Slider */}
             <div className="controls-center">
-              <span className="scrub-label scrub-label-start">Frame 1</span>
-              <div className="scrub-slider-wrapper">
-                <input
-                  type="range"
-                  min="1"
-                  max={TOTAL_FRAMES}
-                  value={currentFrame}
-                  onChange={handleScrubChange}
-                  className="scrub-slider"
-                  aria-label="Scrub through 50 explosion frames"
-                />
-                <div
-                  className="scrub-fill-bar"
-                  style={{ width: `${((currentFrame - 1) / (TOTAL_FRAMES - 1)) * 100}%` }}
-                />
+              <div className="state-description-pill">
+                <span className="state-dot" />
+                <span className="state-text">
+                  {isExploded
+                    ? 'Subassemblies separated. Select any highlighted component to inspect.'
+                    : isPlaying
+                    ? 'Animating subassembly separation...'
+                    : 'Turbine in fully assembled state. Click Explode to separate components.'}
+                </span>
               </div>
-              <span className="scrub-label scrub-label-end">Frame 50 (Hotspots)</span>
             </div>
 
-            {/* Frame Counter Indicator */}
             <div className="controls-right">
-              <span className="frame-counter-pill">
-                <span className="counter-current">{String(currentFrame).padStart(2, '0')}</span>
-                <span className="counter-divider">/</span>
-                <span className="counter-total">{TOTAL_FRAMES}</span>
-              </span>
+              {selectedPart && (
+                <button
+                  type="button"
+                  className="control-btn reset-btn"
+                  onClick={handleResetView}
+                  aria-label="Reset zoom to full exploded view"
+                >
+                  <span>Reset View</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -605,8 +564,12 @@ export default function ExploreParts() {
         {/* Quick Reference Grid Below Stage */}
         <div className="explore-parts-legend">
           <div className="legend-header">
-            <h3 className="legend-title">Internal Turbine Assemblies</h3>
-            <span className="legend-note">Click any assembly below to automatically explode & zoom</span>
+            <div>
+              <h3 className="legend-title">Internal Turbine Assemblies</h3>
+              <p className="legend-subtitle">
+                Select an assembly below to explode the turbine view and inspect technical specifications.
+              </p>
+            </div>
           </div>
 
           <div className="legend-grid">
@@ -616,14 +579,13 @@ export default function ExploreParts() {
                 type="button"
                 className={`legend-card ${selectedPart?.id === part.id ? 'active' : ''}`}
                 onClick={() => {
-                  if (currentFrame !== TOTAL_FRAMES) {
+                  if (!isExploded) {
                     startPlayback(TOTAL_FRAMES, 'forward', () => {
                       handleSelectPart(part);
                     });
                   } else {
                     handleSelectPart(part);
                   }
-                  // Smoothly scroll stage into view if needed
                   stageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }}
               >
@@ -635,7 +597,7 @@ export default function ExploreParts() {
                 <p className="legend-card-desc">{part.shortRole}</p>
                 <div className="legend-card-footer">
                   <span className="legend-inspect-link">
-                    Inspect component
+                    Inspect assembly
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M5 12H19M19 12L12 5M19 12L12 19" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>

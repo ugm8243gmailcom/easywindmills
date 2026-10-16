@@ -1,54 +1,54 @@
 import { useState, useMemo } from 'react';
-import { TURBINE_MODELS } from '../data/turbinesData';
+import { TURBINE_MODELS, CLASSIFICATION_GROUPS } from '../data/turbinesData';
 import ExploreParts from './ExploreParts';
+import ExplorePMSG from './ExplorePMSG';
 
 export default function ExploreWindmillsPage({ onBackToHome }) {
+  // Active turbine view: null means catalogue list view; when set, shows detail view
   const [selectedTurbineId, setSelectedTurbineId] = useState(null);
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [activeGroup, setActiveGroup] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('default');
-  const [selectedSubPartId, setSelectedSubPartId] = useState(null);
+  const [inDevModalTurbine, setInDevModalTurbine] = useState(null);
 
-  // Filter & sort logic (purely technical)
+  // Filter logic across authentic classification groups
   const filteredTurbines = useMemo(() => {
     return TURBINE_MODELS.filter((turbine) => {
-      const matchesCategory =
-        activeCategory === 'all' || turbine.category === activeCategory;
+      const matchesGroup =
+        activeGroup === 'all' || turbine.groupId === activeGroup;
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
         !q ||
         turbine.name.toLowerCase().includes(q) ||
         turbine.subtitle.toLowerCase().includes(q) ||
         turbine.description.toLowerCase().includes(q) ||
-        turbine.categoryLabel.toLowerCase().includes(q);
+        turbine.categoryLabel.toLowerCase().includes(q) ||
+        turbine.groupName.toLowerCase().includes(q);
 
-      return matchesCategory && matchesSearch;
-    }).sort((a, b) => {
-      if (sortBy === 'power-desc') {
-        return parseFloat(b.specs.ratedPower) - parseFloat(a.specs.ratedPower);
-      }
-      if (sortBy === 'power-asc') {
-        return parseFloat(a.specs.ratedPower) - parseFloat(b.specs.ratedPower);
-      }
-      if (sortBy === 'rotor-desc') {
-        return parseFloat(b.specs.rotorDiameter) - parseFloat(a.specs.rotorDiameter);
-      }
-      return 0;
+      return matchesGroup && matchesSearch;
     });
-  }, [activeCategory, searchQuery, sortBy]);
+  }, [activeGroup, searchQuery]);
 
   const selectedTurbine = useMemo(() => {
     return TURBINE_MODELS.find((t) => t.id === selectedTurbineId) || null;
   }, [selectedTurbineId]);
 
-  const handleSelectTurbine = (turbineId) => {
-    setSelectedTurbineId(turbineId);
-    setSelectedSubPartId(null);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const handleCardClick = (turbine) => {
+    if (turbine.isExplosionActive) {
+      setSelectedTurbineId(turbine.id);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      setInDevModalTurbine(turbine);
+    }
   };
 
   const handleBackToCatalog = () => {
     setSelectedTurbineId(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenActiveExperience = () => {
+    setInDevModalTurbine(null);
+    setSelectedTurbineId('hawt-geared');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -82,14 +82,14 @@ export default function ExploreWindmillsPage({ onBackToHome }) {
             {selectedTurbine && (
               <>
                 <span className="breadcrumb-separator">/</span>
-                <span className="breadcrumb-current">{selectedTurbine.name} (Specifications and Parts)</span>
+                <span className="breadcrumb-current">{selectedTurbine.name} (Anatomy)</span>
               </>
             )}
           </div>
         </div>
 
         {/* ===================================================================
-            VIEW 1: CATALOG OF WINDMILL CARDS
+            VIEW 1: EDUCATIONAL CATALOGUE OF TURBINE CLASSIFICATIONS
            =================================================================== */}
         {!selectedTurbine && (
           <div className="catalog-view">
@@ -97,57 +97,39 @@ export default function ExploreWindmillsPage({ onBackToHome }) {
             <div className="catalog-header">
               <div className="catalog-eyebrow">
                 <span className="eyebrow-dot" />
-                <span>COMMERCIAL TURBINE PORTFOLIO</span>
+                <span>TECHNICAL CLASSIFICATION CATALOGUE</span>
               </div>
-              <h1 className="catalog-title">Wind Turbine Specifications and Models</h1>
+              <h1 className="catalog-title">Wind Turbine Classifications and Architecture</h1>
               <p className="catalog-subtitle">
-                Select an industrial wind turbine model to inspect its mechanical architecture, electrical
-                subsystems, and component disassembly.
+                An educational reference cataloguing wind turbines by aerodynamic rotor orientation, 
+                drivetrain configuration, generator technology, and installation environment.
               </p>
             </div>
 
-            {/* Technical Filter Toolbar */}
+            {/* Classification Group Filters and Search Toolbar */}
             <div className="shopping-toolbar">
-              {/* Category Filter Tabs */}
-              <div className="category-tabs-list" role="tablist" aria-label="Turbine Categories">
+              {/* Group Filter Tabs */}
+              <div className="category-tabs-list" role="tablist" aria-label="Classification Groups">
                 <button
                   type="button"
-                  className={`category-tab ${activeCategory === 'all' ? 'active' : ''}`}
-                  onClick={() => setActiveCategory('all')}
+                  className={`category-tab ${activeGroup === 'all' ? 'active' : ''}`}
+                  onClick={() => setActiveGroup('all')}
                 >
-                  All Models ({TURBINE_MODELS.length})
+                  All Classifications ({TURBINE_MODELS.length})
                 </button>
-                <button
-                  type="button"
-                  className={`category-tab ${activeCategory === 'onshore' ? 'active' : ''}`}
-                  onClick={() => setActiveCategory('onshore')}
-                >
-                  Utility Onshore
-                </button>
-                <button
-                  type="button"
-                  className={`category-tab ${activeCategory === 'offshore' ? 'active' : ''}`}
-                  onClick={() => setActiveCategory('offshore')}
-                >
-                  Deep-Sea Offshore
-                </button>
-                <button
-                  type="button"
-                  className={`category-tab ${activeCategory === 'community' ? 'active' : ''}`}
-                  onClick={() => setActiveCategory('community')}
-                >
-                  Community and Distributed
-                </button>
-                <button
-                  type="button"
-                  className={`category-tab ${activeCategory === 'extreme' ? 'active' : ''}`}
-                  onClick={() => setActiveCategory('extreme')}
-                >
-                  Alpine and Cold Climate
-                </button>
+                {CLASSIFICATION_GROUPS.map((group) => (
+                  <button
+                    key={group.id}
+                    type="button"
+                    className={`category-tab ${activeGroup === group.id ? 'active' : ''}`}
+                    onClick={() => setActiveGroup(group.id)}
+                  >
+                    {group.code}: {group.title.split(' ')[0]}
+                  </button>
+                ))}
               </div>
 
-              {/* Search and Sort Controls */}
+              {/* Search Control */}
               <div className="search-sort-group">
                 <div className="search-input-box">
                   <svg className="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -156,74 +138,75 @@ export default function ExploreWindmillsPage({ onBackToHome }) {
                   </svg>
                   <input
                     type="text"
-                    placeholder="Search by model, specs, application..."
+                    placeholder="Search by classification, component, principle..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="search-field"
-                    aria-label="Search windmill models"
+                    aria-label="Search windmill classifications"
                   />
                   {searchQuery && (
                     <button
                       type="button"
                       className="clear-search-btn"
                       onClick={() => setSearchQuery('')}
-                      aria-label="Clear search"
+                      aria-label="Clear search query"
                     >
                       ×
                     </button>
                   )}
                 </div>
-
-                <div className="sort-dropdown-box">
-                  <label htmlFor="sort-select" className="sort-label">Sort by:</label>
-                  <select
-                    id="sort-select"
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="sort-select"
-                  >
-                    <option value="default">Default Order</option>
-                    <option value="power-desc">Rated Power: High to Low</option>
-                    <option value="power-asc">Rated Power: Low to High</option>
-                    <option value="rotor-desc">Rotor Diameter: Large to Small</option>
-                  </select>
-                </div>
               </div>
             </div>
 
-            {/* Results Status Bar */}
+            {/* Active Group Educational Overview Banner (When a specific group is selected) */}
+            {activeGroup !== 'all' && (
+              <div className="group-educational-banner">
+                {(() => {
+                  const currentGroup = CLASSIFICATION_GROUPS.find((g) => g.id === activeGroup);
+                  return currentGroup ? (
+                    <div>
+                      <div className="group-badge-code">{currentGroup.code} Scope</div>
+                      <h3 className="group-banner-title">{currentGroup.title}</h3>
+                      <p className="group-banner-desc">{currentGroup.description}</p>
+                    </div>
+                  ) : null;
+                })()}
+              </div>
+            )}
+
+            {/* Results Count Status */}
             <div className="catalog-status-bar">
               <span className="results-count">
-                Displaying <strong>{filteredTurbines.length}</strong> turbine configuration{filteredTurbines.length !== 1 ? 's' : ''}
+                Displaying <strong>{filteredTurbines.length}</strong> engineering classification{filteredTurbines.length !== 1 ? 's' : ''}
               </span>
               <span className="catalog-tip">
-                Click any model card to inspect subassemblies and internal engineering.
+                Exactly one active 3D component inspection experience is available in this phase.
               </span>
             </div>
 
-            {/* Technical Specification Cards Grid */}
+            {/* Catalogue Cards Grid */}
             <div className="turbines-shop-grid">
               {filteredTurbines.map((turbine) => {
                 return (
                   <article
                     key={turbine.id}
-                    className={`turbine-shop-card ${turbine.is3DReady ? 'card-featured' : ''}`}
-                    onClick={() => handleSelectTurbine(turbine.id)}
+                    className={`turbine-shop-card ${turbine.isExplosionActive ? 'card-featured' : ''}`}
+                    onClick={() => handleCardClick(turbine)}
                     tabIndex={0}
                     role="button"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
-                        handleSelectTurbine(turbine.id);
+                        handleCardClick(turbine);
                       }
                     }}
-                    aria-label={`Inspect ${turbine.name}`}
+                    aria-label={`Examine ${turbine.name}`}
                   >
-                    {/* Media Preview: Real CAD Frame or Vector Blueprint */}
+                    {/* Media Preview: Verified CAD Render or Technical Schematic */}
                     <div className="card-media-wrapper">
                       <img
                         src={turbine.image}
-                        alt={`${turbine.name} technical configuration`}
+                        alt={`${turbine.name} schematic`}
                         className="card-image"
                         loading="lazy"
                       />
@@ -231,14 +214,16 @@ export default function ExploreWindmillsPage({ onBackToHome }) {
 
                       {/* Top Technical Badges */}
                       <div className="card-badge-row">
-                        <span className={`turbine-ribbon ${turbine.is3DReady ? 'ribbon-3d' : 'ribbon-standard'}`}>
-                          {turbine.is3DReady ? '3D Anatomy Explorer' : turbine.badge}
+                        <span className={`turbine-ribbon ${turbine.isExplosionActive ? 'ribbon-3d' : 'ribbon-standard'}`}>
+                          {turbine.badge}
                         </span>
-                        <span className="power-tag">{turbine.specs.ratedPower}</span>
+                        <span className="group-code-tag">{turbine.groupName.split(':')[0]}</span>
                       </div>
 
                       <div className="card-hover-prompt">
-                        <span className="prompt-text">Inspect Internal Parts →</span>
+                        <span className="prompt-text">
+                          {turbine.isExplosionActive ? 'Explore Parts →' : 'View Configuration Details →'}
+                        </span>
                       </div>
                     </div>
 
@@ -246,38 +231,22 @@ export default function ExploreWindmillsPage({ onBackToHome }) {
                     <div className="card-content">
                       <div className="card-meta-row">
                         <span className="card-category-tag">{turbine.categoryLabel}</span>
-                        <span className="card-efficiency-tag">Betz: {turbine.specs.efficiency}</span>
+                        <span className={`card-status-badge ${turbine.isExplosionActive ? 'status-active' : 'status-dev'}`}>
+                          {turbine.status}
+                        </span>
                       </div>
 
                       <h3 className="card-turbine-title">{turbine.name}</h3>
                       <p className="card-turbine-subtitle">{turbine.subtitle}</p>
 
-                      {/* Technical Specs Matrix */}
-                      <div className="card-specs-matrix">
-                        <div className="spec-chip">
-                          <span className="spec-chip-label">Rated Capacity</span>
-                          <span className="spec-chip-value">{turbine.specs.ratedPower}</span>
-                        </div>
-                        <div className="spec-chip">
-                          <span className="spec-chip-label">Rotor Diameter</span>
-                          <span className="spec-chip-value">{turbine.specs.rotorDiameter}</span>
-                        </div>
-                        <div className="spec-chip">
-                          <span className="spec-chip-label">Cut-In Speed</span>
-                          <span className="spec-chip-value">{turbine.specs.cutInWind}</span>
-                        </div>
-                        <div className="spec-chip">
-                          <span className="spec-chip-label">Hub Height</span>
-                          <span className="spec-chip-value">{turbine.specs.hubHeight}</span>
-                        </div>
-                      </div>
+                      <p className="card-factual-desc">{turbine.description}</p>
 
-                      {/* Engineering Highlights */}
+                      {/* Engineering Principles List */}
                       <ul className="card-features-list">
-                        {turbine.keyBullets.slice(0, 3).map((bullet, i) => (
+                        {turbine.keyPoints.slice(0, 3).map((point, i) => (
                           <li key={i} className="card-feature-item">
                             <span className="feature-bullet-mark">-</span>
-                            <span>{bullet}</span>
+                            <span>{point}</span>
                           </li>
                         ))}
                       </ul>
@@ -285,18 +254,18 @@ export default function ExploreWindmillsPage({ onBackToHome }) {
                       {/* Card Footer */}
                       <div className="card-action-footer">
                         <div className="card-status-label">
-                          <span className="status-live-dot" />
-                          <span>{turbine.is3DReady ? '50-Frame Disassembly' : 'Schematic Blueprint'}</span>
+                          <span className={turbine.isExplosionActive ? 'status-live-dot' : 'status-dev-dot'} />
+                          <span>{turbine.isExplosionActive ? 'Interactive 3D Stage' : 'Schematic Reference'}</span>
                         </div>
                         <button
                           type="button"
-                          className="card-explore-btn"
+                          className={`card-explore-btn ${turbine.isExplosionActive ? 'btn-active' : 'btn-dev'}`}
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleSelectTurbine(turbine.id);
+                            handleCardClick(turbine);
                           }}
                         >
-                          <span>Inspect Parts</span>
+                          <span>Explore Parts</span>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <path d="M5 12H19M19 12L12 5M19 12L12 19" strokeLinecap="round" strokeLinejoin="round" />
                           </svg>
@@ -310,17 +279,17 @@ export default function ExploreWindmillsPage({ onBackToHome }) {
 
             {filteredTurbines.length === 0 && (
               <div className="catalog-empty-state">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2">
                   <circle cx="11" cy="11" r="8" />
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
-                <h3>No wind turbines matched the current filter</h3>
-                <p>Reset the category filter or try another technical parameter.</p>
+                <h3>No classifications matched your search</h3>
+                <p>Try searching for rotor, drivetrain, generator, or installation parameters.</p>
                 <button
                   type="button"
                   className="reset-filters-btn"
                   onClick={() => {
-                    setActiveCategory('all');
+                    setActiveGroup('all');
                     setSearchQuery('');
                   }}
                 >
@@ -332,7 +301,7 @@ export default function ExploreWindmillsPage({ onBackToHome }) {
         )}
 
         {/* ===================================================================
-            VIEW 2: INDIVIDUAL WINDMILL PARTS EXPLORATION (DETAIL VIEW)
+            VIEW 2: ACTIVE TURBINE EXPLORATION (DETAIL VIEW)
            =================================================================== */}
         {selectedTurbine && (
           <div className="turbine-detail-view">
@@ -343,179 +312,150 @@ export default function ExploreWindmillsPage({ onBackToHome }) {
                   type="button"
                   className="back-to-catalog-btn"
                   onClick={handleBackToCatalog}
-                  aria-label="Return to Windmill Catalog"
+                  aria-label="Return to Windmill Classification Catalogue"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M19 12H5M5 12L12 19M5 12L12 5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                  <span>Back to Catalog</span>
+                  <span>Back to Catalogue</span>
                 </button>
 
-                {/* Model Quick Switcher */}
-                <div className="model-quick-switcher" role="tablist" aria-label="Switch turbine model">
-                  <span className="switcher-label">Model:</span>
-                  {TURBINE_MODELS.map((t) => (
-                    <button
-                      key={t.id}
-                      type="button"
-                      className={`switch-tab-btn ${t.id === selectedTurbine.id ? 'active' : ''}`}
-                      onClick={() => handleSelectTurbine(t.id)}
-                    >
-                      <span>{t.name.replace('EasyWindmill ', '')}</span>
-                      {t.is3DReady && <span className="tab-tag-3d">3D</span>}
-                    </button>
-                  ))}
+                <div className="active-config-tag">
+                  <span>Active Inspection Experience</span>
                 </div>
               </div>
 
-              {/* Turbine Spec Banner */}
+              {/* Turbine Technical Introduction Banner (Replaces fabricated specification strip) */}
               <div className="turbine-hero-banner">
                 <div className="banner-info">
                   <div className="banner-badge-row">
-                    <span className="banner-cat-tag">{selectedTurbine.categoryLabel}</span>
-                    <span className="banner-power-tag">{selectedTurbine.specs.ratedPower}</span>
-                    {selectedTurbine.is3DReady && (
-                      <span className="banner-3d-tag">3D Disassembly View Active</span>
-                    )}
+                    <span className="banner-cat-tag">{selectedTurbine.groupName}</span>
+                    <span className="banner-3d-tag">3D Disassembly View Active</span>
                   </div>
                   <h2 className="banner-title">{selectedTurbine.name}</h2>
                   <p className="banner-desc">{selectedTurbine.description}</p>
                 </div>
 
-                <div className="banner-specs-list">
-                  <div className="b-spec">
-                    <span className="b-spec-k">Rotor</span>
-                    <span className="b-spec-v">{selectedTurbine.specs.rotorDiameter}</span>
-                  </div>
-                  <div className="b-spec">
-                    <span className="b-spec-k">Cut-In</span>
-                    <span className="b-spec-v">{selectedTurbine.specs.cutInWind}</span>
-                  </div>
-                  <div className="b-spec">
-                    <span className="b-spec-k">Hub Height</span>
-                    <span className="b-spec-v">{selectedTurbine.specs.hubHeight}</span>
-                  </div>
-                  <div className="b-spec">
-                    <span className="b-spec-k">Efficiency</span>
-                    <span className="b-spec-v">{selectedTurbine.specs.efficiency}</span>
+                {/* Technical Configuration Overview (Factual engineering parameters) */}
+                <div className="banner-config-breakdown">
+                  <h4 className="config-box-title">Technical Configuration Summary</h4>
+                  <div className="config-grid">
+                    <div className="config-item">
+                      <span className="config-k">Rotor Architecture</span>
+                      <span className="config-v">{selectedTurbine.technicalOverview.rotorArchitecture}</span>
+                    </div>
+                    <div className="config-item">
+                      <span className="config-k">Drivetrain System</span>
+                      <span className="config-v">{selectedTurbine.technicalOverview.drivetrainArchitecture}</span>
+                    </div>
+                    <div className="config-item">
+                      <span className="config-k">Generator Machine</span>
+                      <span className="config-v">{selectedTurbine.technicalOverview.generatorArchitecture}</span>
+                    </div>
+                    <div className="config-item">
+                      <span className="config-k">Power Conditioning</span>
+                      <span className="config-v">{selectedTurbine.technicalOverview.gridInterface}</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* ALPHA-3200: 50-Frame Interactive 3D Disassembly Stage */}
-            {selectedTurbine.is3DReady ? (
-              <div className="embedded-explore-wrapper">
+            {/* Interactive Disassembly Experience: Geared HAWT or Direct-Drive PMSG */}
+            <div className="embedded-explore-wrapper">
+              {selectedTurbine.id === 'pmsg-generator' ? (
+                <ExplorePMSG />
+              ) : (
                 <ExploreParts />
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ===================================================================
+            HONEST "IN DEVELOPMENT" MODAL DIALOG FOR NON-ACTIVE CONFIGURATIONS
+           =================================================================== */}
+        {inDevModalTurbine && (
+          <div className="indev-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="indev-title">
+            <div className="indev-modal-backdrop" onClick={() => setInDevModalTurbine(null)} />
+            <div className="indev-modal-card">
+              <div className="indev-header">
+                <div className="indev-badge">
+                  <span>Classification Reference: {inDevModalTurbine.groupName.split(':')[0]}</span>
+                </div>
+                <button
+                  type="button"
+                  className="indev-close-btn"
+                  onClick={() => setInDevModalTurbine(null)}
+                  aria-label="Close dialog"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M18 6L6 18M6 6L18 18" strokeLinecap="round" />
+                  </svg>
+                </button>
               </div>
-            ) : (
-              /* ALTERNATIVE TURBINE: Specialized Component Blueprint Visualizer */
-              <div className="subsystem-blueprint-section">
-                <div className="blueprint-top-box">
-                  <div className="blueprint-notice">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0284c7" strokeWidth="2">
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="16" x2="12" y2="12" />
-                      <line x1="12" y1="8" x2="12.01" y2="8" />
-                    </svg>
-                    <div>
-                      <strong>Subsystem Architecture:</strong> Detailed engineering schematics and subassembly
-                      data for the {selectedTurbine.name}.
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    className="launch-3d-flagship-btn"
-                    onClick={() => handleSelectTurbine('alpha-3200')}
-                  >
-                    <span>Inspect Alpha-3200 50-Frame Disassembly Stage</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M5 12H19M19 12L12 5M19 12L12 19" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
+
+              <div className="indev-body">
+                <h3 id="indev-title" className="indev-title">{inDevModalTurbine.name}</h3>
+                <p className="indev-subtitle">{inDevModalTurbine.subtitle}</p>
+
+                <div className="indev-image-wrap">
+                  <img src={inDevModalTurbine.image} alt={inDevModalTurbine.name} className="indev-preview-img" />
                 </div>
 
-                {/* Main Visual and Sub-parts Grid */}
-                <div className="blueprint-layout-grid">
-                  <div className="blueprint-photo-card">
-                    <div className="blueprint-img-wrapper">
-                      <img
-                        src={selectedTurbine.image}
-                        alt={selectedTurbine.name}
-                        className="blueprint-img"
-                      />
-                      <div className="blueprint-img-tag">
-                        <span>{selectedTurbine.subtitle}</span>
-                      </div>
-                    </div>
+                <div className="indev-status-box">
+                  <div className="indev-status-badge">In Development</div>
+                  <p className="indev-status-message">
+                    The interactive 3D component disassembly for this configuration is currently in development. 
+                    EasyWindmill provides verified interactive inspection experiences for both the 
+                    <strong>Horizontal-Axis Geared Wind Turbine</strong> and the <strong>Direct-Drive Permanent-Magnet Synchronous Generator (PMSG)</strong>.
+                  </p>
+                </div>
 
-                    <div className="blueprint-bullets-card">
-                      <h4 className="bullets-title">Key Architectural Features</h4>
-                      <ul className="bullets-list">
-                        {selectedTurbine.keyBullets.map((b, i) => (
-                          <li key={i} className="bullet-row">
-                            <span className="bullet-dot" />
-                            <span>{b}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div className="blueprint-parts-column">
-                    <div className="parts-column-header">
-                      <h3>Mechanical and Electrical Subassemblies</h3>
-                      <span>Select an assembly to inspect technical specifications and operational dynamics</span>
-                    </div>
-
-                    <div className="subassemblies-list">
-                      {selectedTurbine.parts.map((part) => {
-                        const isExpanded = selectedSubPartId === part.id;
-                        return (
-                          <div
-                            key={part.id}
-                            className={`subassembly-card ${isExpanded ? 'expanded' : ''}`}
-                            onClick={() => setSelectedSubPartId(isExpanded ? null : part.id)}
-                          >
-                            <div className="subassembly-header">
-                              <div className="subassembly-num">{part.number}</div>
-                              <div className="subassembly-titles">
-                                <span className="subassembly-cat">{part.category}</span>
-                                <h4 className="subassembly-name">{part.name}</h4>
-                                <p className="subassembly-short">{part.shortRole}</p>
-                              </div>
-                              <span className="expand-indicator-text">
-                                {isExpanded ? 'Hide Specs' : 'View Specs'}
-                              </span>
-                            </div>
-
-                            <p className="subassembly-desc">{part.description}</p>
-
-                            {isExpanded && (
-                              <div className="subassembly-deep-dive">
-                                <div className="subassembly-specs-grid">
-                                  {part.specs.map((s, idx) => (
-                                    <div key={idx} className="sub-spec-item">
-                                      <span className="sub-spec-k">{s.label}</span>
-                                      <span className="sub-spec-v">{s.value}</span>
-                                    </div>
-                                  ))}
-                                </div>
-
-                                <div className="subassembly-mechanism">
-                                  <h5>Operational Dynamics</h5>
-                                  <p>{part.mechanism}</p>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                <div className="indev-key-points">
+                  <h4 className="indev-points-title">Core Engineering Principles</h4>
+                  <ul>
+                    {inDevModalTurbine.keyPoints.map((point, i) => (
+                      <li key={i}>{point}</li>
+                    ))}
+                  </ul>
                 </div>
               </div>
-            )}
+
+              <div className="indev-footer">
+                <button
+                  type="button"
+                  className="indev-dismiss-btn"
+                  onClick={() => setInDevModalTurbine(null)}
+                >
+                  Close Reference
+                </button>
+                <button
+                  type="button"
+                  className="indev-explore-active-btn"
+                  onClick={() => {
+                    setInDevModalTurbine(null);
+                    setSelectedTurbineId('pmsg-generator');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                >
+                  <span>Explore Direct-Drive PMSG</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M5 12H19M19 12L12 5M19 12L12 19" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  className="indev-explore-active-btn"
+                  onClick={handleOpenActiveExperience}
+                >
+                  <span>Explore Geared Turbine</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M5 12H19M19 12L12 5M19 12L12 19" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

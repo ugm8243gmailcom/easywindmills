@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <pattern id="grid-pmsg" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15, 23, 42, 0.06)" stroke-width="0.8"/>
+    </pattern>
+  </defs>
+
+  <rect width="800" height="450" fill="#f8fafc"/>
+  <rect width="800" height="450" fill="url(#grid-pmsg)"/>
+
+  <!-- Classification Header -->
+  <rect x="40" y="24" width="230" height="28" rx="4" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="52" y="42" fill="#0369a1" font-family="sans-serif" font-weight="700" font-size="11" letter-spacing="0.08em">GENERATOR TECHNOLOGY: GROUP C</text>
+
+  <!-- PMSG Electrical Schematic Diagram -->
+  <!-- Mechanical Input -->
+  <rect x="60" y="210" width="100" height="20" fill="#cbd5e1" stroke="#0f172a" stroke-width="2"/>
+  <text x="110" y="195" text-anchor="middle" fill="#0f172a" font-family="sans-serif" font-size="11" font-weight="700">Mechanical Input</text>
+  <text x="110" y="245" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">Direct or Geared</text>
+
+  <!-- Generator Machine (Permanent Magnet Rotor) -->
+  <circle cx="250" cy="220" r="80" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+  <circle cx="250" cy="220" r="50" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
+  <!-- Magnets on Rotor (N/S poles) -->
+  <rect x="235" y="175" width="12" height="18" fill="#e06b52"/>
+  <rect x="253" y="175" width="12" height="18" fill="#0284c7"/>
+  <rect x="235" y="247" width="12" height="18" fill="#0284c7"/>
+  <rect x="253" y="247" width="12" height="18" fill="#e06b52"/>
+  <text x="250" y="222" text-anchor="middle" fill="#0f172a" font-family="sans-serif" font-size="11" font-weight="700">PMSG</text>
+  <text x="250" y="238" text-anchor="middle" fill="#0369a1" font-family="monospace" font-size="8.5">Neodymium Magnets</text>
+
+  <!-- Stator Output Leads (100% Power Flow) -->
+  <path d="M 330 220 L 400 220" fill="none" stroke="#0284c7" stroke-width="3"/>
+  <text x="365" y="210" text-anchor="middle" fill="#0284c7" font-family="monospace" font-size="9" font-weight="700">100% POWER</text>
+
+  <!-- Full-Scale Frequency Converter -->
+  <rect x="400" y="165" width="180" height="110" rx="6" fill="#ffffff" stroke="#0284c7" stroke-width="2.5"/>
+  <rect x="415" y="180" width="65" height="80" fill="rgba(2, 132, 199, 0.08)" stroke="#334155" stroke-width="1.5"/>
+  <text x="447" y="215" text-anchor="middle" fill="#0f172a" font-family="sans-serif" font-size="9.5" font-weight="700">AC / DC</text>
+  <text x="447" y="230" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="8.5">Rectifier</text>
+
+  <line x1="480" y1="220" x2="500" y2="220" stroke="#0284c7" stroke-width="2.5"/>
+
+  <rect x="500" y="180" width="65" height="80" fill="rgba(2, 132, 199, 0.08)" stroke="#334155" stroke-width="1.5"/>
+  <text x="532" y="215" text-anchor="middle" fill="#0f172a" font-family="sans-serif" font-size="9.5" font-weight="700">DC / AC</text>
+  <text x="532" y="230" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="8.5">Inverter</text>
+
+  <text x="490" y="295" text-anchor="middle" fill="#0f172a" font-family="sans-serif" font-size="10.5" font-weight="700">Full-Scale 4-Quadrant Converter</text>
+
+  <!-- Output to Grid Transformer -->
+  <path d="M 580 220 L 640 220" fill="none" stroke="#0f172a" stroke-width="3"/>
+
+  <!-- Step-Up Transformer -->
+  <rect x="640" y="170" width="110" height="100" rx="6" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+  <circle cx="695" cy="205" r="16" fill="none" stroke="#0284c7" stroke-width="2"/>
+  <circle cx="695" cy="235" r="16" fill="none" stroke="#0284c7" stroke-width="2"/>
+  <text x="695" y="285" text-anchor="middle" fill="#0f172a" font-family="sans-serif" font-size="10.5" font-weight="700">Grid Interconnect</text>
+  <text x="695" y="300" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">50/60 Hz Synchronized</text>
+
+  <!-- Summary Footnote -->
+  <text x="60" y="420" fill="#475569" font-family="sans-serif" font-size="10.5">
+    Permanent-magnet synchronous generators eliminate electrical rotor excitation losses and use a full-scale power converter to completely decouple turbine rotational speed from grid frequency.
+  </text>
+</svg>

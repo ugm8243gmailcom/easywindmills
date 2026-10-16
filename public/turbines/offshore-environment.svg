@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <pattern id="grid-offshore" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15, 23, 42, 0.06)" stroke-width="0.8"/>
+    </pattern>
+  </defs>
+
+  <rect width="800" height="450" fill="#f8fafc"/>
+  <rect width="800" height="450" fill="url(#grid-offshore)"/>
+
+  <!-- Classification Header -->
+  <rect x="40" y="24" width="250" height="28" rx="4" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="52" y="42" fill="#0369a1" font-family="sans-serif" font-weight="700" font-size="11" letter-spacing="0.08em">INSTALLATION ENVIRONMENT: GROUP D</text>
+
+  <!-- Water Column & Seabed -->
+  <!-- Water Body -->
+  <rect x="40" y="310" width="720" height="80" fill="rgba(2, 132, 199, 0.08)"/>
+  <!-- Sea Surface Line -->
+  <line x1="40" y1="310" x2="760" y2="310" stroke="#0284c7" stroke-width="2" stroke-dasharray="8,4"/>
+  <text x="60" y="302" fill="#0284c7" font-family="monospace" font-size="10">MEAN SEA LEVEL (0.0 m)</text>
+
+  <!-- Seabed Plane -->
+  <line x1="40" y1="390" x2="760" y2="390" stroke="#64748b" stroke-width="2"/>
+  <text x="60" y="412" fill="#64748b" font-family="monospace" font-size="10">SEABED / MARINE SUBSTRATE</text>
+
+  <!-- Subsea Monopile Driven into Seabed -->
+  <rect x="375" y="310" width="50" height="110" fill="#cbd5e1" stroke="#334155" stroke-width="2"/>
+  <line x1="375" y1="390" x2="425" y2="390" stroke="#0f172a" stroke-width="1.5"/>
+
+  <!-- Yellow Offshore Transition Piece -->
+  <rect x="378" y="275" width="44" height="35" rx="2" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
+  <text x="435" y="295" fill="#ca8a04" font-family="monospace" font-size="9.5" font-weight="700">TRANSITION PIECE</text>
+
+  <!-- Tubular Tower -->
+  <polygon points="383,275 391,120 409,120 417,275" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+
+  <!-- Nacelle & Rotor -->
+  <rect x="375" y="108" width="52" height="16" rx="3" fill="#ffffff" stroke="#0f172a" stroke-width="1.8"/>
+  <circle cx="375" cy="116" r="9" fill="#0284c7"/>
+  <!-- 3-Blade Rotor -->
+  <line x1="375" y1="116" x2="375" y2="30" stroke="#0f172a" stroke-width="2.5"/>
+  <line x1="375" y1="116" x2="295" y2="165" stroke="#0f172a" stroke-width="2.5"/>
+  <line x1="375" y1="116" x2="455" y2="165" stroke="#0f172a" stroke-width="2.5"/>
+
+  <!-- Subsea Power Cable -->
+  <path d="M 400 370 Q 500 375 600 390 L 760 390" fill="none" stroke="#e06b52" stroke-width="2.5"/>
+  <text x="610" y="380" fill="#e06b52" font-family="monospace" font-size="9" font-weight="700">SUBSEA EXPORT CABLE</text>
+
+  <!-- Technical Annotation Box -->
+  <rect x="540" y="150" width="220" height="110" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="555" y="174" fill="#0f172a" font-family="sans-serif" font-weight="700" font-size="12">Offshore Marine Principles</text>
+  <text x="555" y="194" fill="#475569" font-family="sans-serif" font-size="10.5">- Captures stronger marine winds</text>
+  <text x="555" y="210" fill="#475569" font-family="sans-serif" font-size="10.5">- Fixed monopile or floating hull</text>
+  <text x="555" y="226" fill="#475569" font-family="sans-serif" font-size="10.5">- C5-M marine corrosion isolation</text>
+  <text x="555" y="242" fill="#475569" font-family="sans-serif" font-size="10.5">- High-capacity subsea cabling</text>
+
+  <text x="60" y="434" fill="#475569" font-family="sans-serif" font-size="10.5">
+    Offshore wind turbines operate in marine waters, allowing significantly larger rotor dimensions and higher capacity factors without terrain or transportation obstacles.
+  </text>
+</svg>

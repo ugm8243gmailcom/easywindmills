@@ -181,11 +181,11 @@ export default function App() {
                     <div>
                       <div className="section-eyebrow">
                         <span className="eyebrow-dot" />
-                        <span>TURBINE SELECTION</span>
+                        <span>TURBINE CLASSIFICATIONS</span>
                       </div>
-                      <h2 className="section-title">Commercial Wind Turbine Models</h2>
+                      <h2 className="section-title">Wind Turbine Architecture and Classifications</h2>
                       <p className="teaser-subtitle">
-                        From 3.2 MW onshore turbines with 50-frame exploded 3D disassembly to 8.0 MW deep-sea offshore models.
+                        Explore core turbine classifications spanning aerodynamic rotor orientation, mechanical drivetrains, generator technologies, and installation environments.
                       </p>
                     </div>
 
@@ -194,7 +194,7 @@ export default function App() {
                       className="view-all-turbines-btn"
                       onClick={() => handleNavigate('explore-windmills')}
                     >
-                      <span>Explore Turbine Catalog</span>
+                      <span>Explore Technical Catalogue</span>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M5 12H19M19 12L12 5M19 12L12 19" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
@@ -219,9 +219,9 @@ export default function App() {
                             className="mini-card-thumb"
                             loading="lazy"
                           />
-                          <span className="mini-card-power">{turbine.specs.ratedPower}</span>
-                          {turbine.is3DReady && (
-                            <span className="mini-card-badge">3D Disassembly</span>
+                          <span className="mini-card-power">{turbine.groupName.split(':')[0]}</span>
+                          {turbine.isExplosionActive && (
+                            <span className="mini-card-badge">3D Disassembly Active</span>
                           )}
                         </div>
                         <div className="mini-card-body">
@@ -229,7 +229,9 @@ export default function App() {
                           <h4 className="mini-card-title">{turbine.name}</h4>
                           <p className="mini-card-desc">{turbine.subtitle}</p>
                           <div className="mini-card-footer">
-                            <span className="mini-card-link">Inspect parts and mechanics →</span>
+                            <span className="mini-card-link">
+                              {turbine.isExplosionActive ? 'Inspect 3D disassembly →' : 'View classification details →'}
+                            </span>
                           </div>
                         </div>
                       </div>

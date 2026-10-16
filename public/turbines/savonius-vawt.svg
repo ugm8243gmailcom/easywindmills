@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <pattern id="grid-savonius" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15, 23, 42, 0.06)" stroke-width="0.8"/>
+    </pattern>
+  </defs>
+
+  <rect width="800" height="450" fill="#f8fafc"/>
+  <rect width="800" height="450" fill="url(#grid-savonius)"/>
+
+  <!-- Classification Header -->
+  <rect x="40" y="24" width="230" height="28" rx="4" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="52" y="42" fill="#0369a1" font-family="sans-serif" font-weight="700" font-size="11" letter-spacing="0.08em">ROTOR ORIENTATION: GROUP A</text>
+
+  <!-- Ground Plane -->
+  <line x1="60" y1="400" x2="740" y2="400" stroke="#64748b" stroke-width="2"/>
+  <text x="60" y="424" fill="#64748b" font-family="monospace" font-size="10">GROUND LEVEL / FOUNDATION DATUM</text>
+
+  <!-- Central Vertical Shaft -->
+  <rect x="395" y="80" width="10" height="310" fill="#cbd5e1" stroke="#334155" stroke-width="1.5"/>
+  <line x1="400" y1="60" x2="400" y2="400" stroke="#0284c7" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- Top End-Plate Disc -->
+  <ellipse cx="400" cy="110" rx="140" ry="24" fill="#e2e8f0" stroke="#0f172a" stroke-width="2"/>
+
+  <!-- S-Shaped Scooped Vanes (Characteristic Savonius Profile in Elevation) -->
+  <!-- Left Scoop (Advancing Bucket) -->
+  <path d="M 400 110 C 330 110, 260 125, 260 180 L 260 300 C 260 355, 330 370, 400 370" fill="none" stroke="#0f172a" stroke-width="3"/>
+  <path d="M 400 110 C 350 120, 310 140, 310 180 L 310 300 C 310 340, 350 360, 400 370" fill="rgba(2, 132, 199, 0.08)" stroke="#334155" stroke-width="1.5"/>
+
+  <!-- Right Scoop (Returning Bucket with overlap gap) -->
+  <path d="M 380 110 C 450 110, 540 125, 540 180 L 540 300 C 540 355, 450 370, 380 370" fill="none" stroke="#0f172a" stroke-width="3"/>
+  <path d="M 380 110 C 420 120, 480 140, 480 180 L 480 300 C 480 340, 420 360, 380 370" fill="rgba(2, 132, 199, 0.08)" stroke="#334155" stroke-width="1.5"/>
+
+  <!-- Central Overlap Jet Arrow -->
+  <path d="M 320 240 Q 390 230 420 240" fill="none" stroke="#0284c7" stroke-width="2" stroke-dasharray="3,2"/>
+  <polygon points="420,237 428,241 419,245" fill="#0284c7"/>
+  <text x="365" y="222" fill="#0284c7" font-family="monospace" font-size="9" font-weight="700">OVERLAP FLOW</text>
+
+  <!-- Bottom End-Plate Disc -->
+  <ellipse cx="400" cy="370" rx="140" ry="24" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+
+  <!-- Base Generator & Bearings -->
+  <rect x="365" y="380" width="70" height="20" rx="2" fill="#334155" stroke="#0f172a" stroke-width="1.5"/>
+  <rect x="375" y="385" width="50" height="10" fill="#0284c7"/>
+
+  <!-- Wind Flow Arrows (Drag Principle) -->
+  <g transform="translate(100, 180)">
+    <line x1="0" y1="0" x2="60" y2="0" stroke="#0284c7" stroke-width="2"/>
+    <polygon points="60,-4 70,0 60,4" fill="#0284c7"/>
+    <line x1="0" y1="20" x2="60" y2="20" stroke="#0284c7" stroke-width="2"/>
+    <polygon points="60,16 70,20 60,24" fill="#0284c7"/>
+    <text x="0" y="-8" fill="#0369a1" font-family="sans-serif" font-size="11" font-weight="700">Differential Drag Force</text>
+    <text x="0" y="42" fill="#64748b" font-family="sans-serif" font-size="9.5">Concave vs. Convex aerodynamic drag</text>
+  </g>
+
+  <!-- Technical Annotation Card -->
+  <rect x="560" y="270" width="200" height="110" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="575" y="294" fill="#0f172a" font-family="sans-serif" font-weight="700" font-size="12">Savonius Rotor Principles</text>
+  <text x="575" y="314" fill="#475569" font-family="sans-serif" font-size="10.5">- Drag-driven vertical-axis design</text>
+  <text x="575" y="330" fill="#475569" font-family="sans-serif" font-size="10.5">- S-shaped overlapping buckets</text>
+  <text x="575" y="346" fill="#475569" font-family="sans-serif" font-size="10.5">- High starting torque at low speeds</text>
+  <text x="575" y="362" fill="#475569" font-family="sans-serif" font-size="10.5">- Robust, self-starting operation</text>
+</svg>

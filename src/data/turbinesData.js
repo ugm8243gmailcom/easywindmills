@@ -1,277 +1,340 @@
 import { WINDMILL_PARTS } from './windmillParts';
+import { PMSG_PARTS } from './pmsgParts';
+
+export const CLASSIFICATION_GROUPS = [
+  {
+    id: 'group-a',
+    code: 'Group A',
+    title: 'Rotor Orientation and Aerodynamics',
+    description:
+      'Classifies turbines by rotor rotational axis (horizontal vs. vertical) and primary aerodynamic energy extraction principle (aerofoil lift vs. aerodynamic drag).'
+  },
+  {
+    id: 'group-b',
+    code: 'Group B',
+    title: 'Drivetrain Configurations',
+    description:
+      'Classifies how rotational torque is transmitted from the low-speed rotor hub to the generator, comparing speed-increasing gearboxes with direct-drive mechanical couplings.'
+  },
+  {
+    id: 'group-c',
+    code: 'Group C',
+    title: 'Generator Technologies',
+    description:
+      'Classifies the electromechanical machine types that convert rotational mechanical power into AC electricity, and their power electronic interface with the grid.'
+  },
+  {
+    id: 'group-d',
+    code: 'Group D',
+    title: 'Installation Environments',
+    description:
+      'Classifies terrestrial versus marine deployment environments, foundation structures, and ambient environmental design requirements.'
+  }
+];
 
 export const TURBINE_MODELS = [
+  // =========================================================================
+  // GROUP A: ROTOR ORIENTATION AND AERODYNAMICS
+  // =========================================================================
   {
-    id: 'alpha-3200',
-    name: 'EasyWindmill Alpha-3200',
-    subtitle: '3.2 MW Commercial Onshore Turbine',
-    category: 'onshore',
-    categoryLabel: 'Utility Onshore',
-    badge: '3D Disassembly Stage',
-    badgeType: 'technical',
-    image: '/turbines/alpha-3200.jpg',
-    is3DReady: true,
-    specs: {
-      ratedPower: '3.2 MW',
-      rotorDiameter: '125 m',
-      cutInWind: '3.0 m/s',
-      ratedWind: '11.5 m/s',
-      cutOutWind: '25.0 m/s',
-      hubHeight: '110 m',
-      efficiency: '48.8% Betz',
-      blades: '3-Blade Aero Composite'
-    },
-    keyBullets: [
-      '50-frame interactive 3D disassembly with internal component zoom',
-      'High-torque permanent magnet synchronous generator with 97.6% efficiency',
-      'Dual independent electromechanical blade pitch control with auto-feathering',
-      'High-speed SCADA optical telemetry with vibration and temperature sensors'
-    ],
+    id: 'hawt-geared',
+    groupId: 'group-a',
+    groupName: 'Rotor Orientation and Aerodynamics',
+    categoryLabel: 'Horizontal-Axis Aerodynamics',
+    name: 'Horizontal-Axis Wind Turbine (HAWT)',
+    subtitle: 'Parallel-shaft geared drivetrain with synchronous generator',
+    image: '/turbines/hawt-geared.jpg',
+    isExplosionActive: true,
+    status: 'Interactive 3D View Available',
+    badge: 'Interactive 3D View Active',
+    badgeType: 'active',
     description:
-      'The Alpha-3200 is an onshore utility-scale wind turbine designed for high annual energy production in Class II and Class III wind conditions across undulating terrain, ridges, and open plains.',
+      'The predominant design in utility-scale wind generation worldwide. Utilizes an upwind propeller-style three-bladed rotor rotating about a horizontal axis. Aerodynamic lift turns the low-speed shaft, driving an internal speed-increasing gearbox and synchronous generator.',
+    technicalOverview: {
+      rotorArchitecture: '3-Blade Upwind Propeller Rotor with Independent Pitch Control',
+      drivetrainArchitecture: 'Multi-Stage Geared Speed Increaser (Planetary + Parallel Shafts)',
+      generatorArchitecture: 'High-Speed Synchronous AC Generator',
+      gridInterface: 'Full-Scale Power Electronic Frequency Converter',
+      orientationSystem: 'Active Motorized Yaw Bearing with Hydraulic Holding Brakes'
+    },
+    keyPoints: [
+      'Interactive 3D disassembly experience with selectable internal subassemblies',
+      'Speed-increasing gearbox steps up low rotor RPM to synchronous generator operating speed',
+      'Independent electromechanical blade pitch feathering provides primary aerodynamic braking',
+      'Component data and operational descriptions verified against DOE and NREL technical literature'
+    ],
     parts: WINDMILL_PARTS
   },
   {
-    id: 'oceanic-8000',
-    name: 'EasyWindmill Oceanic-8000',
-    subtitle: '8.0 MW Deep-Water Offshore Turbine',
-    category: 'offshore',
-    categoryLabel: 'Offshore Deep-Sea',
-    badge: 'Offshore Specification',
-    badgeType: 'offshore',
-    image: '/turbines/oceanic-8000.svg',
-    is3DReady: false,
-    specs: {
-      ratedPower: '8.0 MW',
-      rotorDiameter: '164 m',
-      cutInWind: '3.5 m/s',
-      ratedWind: '12.0 m/s',
-      cutOutWind: '28.0 m/s',
-      hubHeight: '140 m',
-      efficiency: '49.2% Betz',
-      blades: '80m Carbon-Epoxy Spars'
-    },
-    keyBullets: [
-      'Direct-drive permanent magnet generator without a high-maintenance mechanical gearbox',
-      'C5-M maritime corrosion protection with pressurized air filtration canopy',
-      'Integrated internal 10-tonne service gantry crane and helicopter hoisting area',
-      'Dual 66 kV subsea export cables with armored seabed anchoring'
-    ],
+    id: 'darrieus-vawt',
+    groupId: 'group-a',
+    groupName: 'Rotor Orientation and Aerodynamics',
+    categoryLabel: 'Vertical-Axis Aerodynamics',
+    name: 'Darrieus Vertical-Axis Wind Turbine (VAWT)',
+    subtitle: 'Lift-based curved troposkein vertical-axis rotor',
+    image: '/turbines/darrieus-vawt.svg',
+    isExplosionActive: false,
+    status: 'In development',
+    badge: 'Classification Reference',
+    badgeType: 'reference',
     description:
-      'Engineered for deep-water marine wind farms. Operates on monopile and jacket foundations in harsh ocean storm environments, delivering baseload clean energy into coastal transmission grids.',
-    parts: [
-      {
-        id: 'offshore-rotor',
-        number: '01',
-        name: '164m Carbon-Infused Rotor',
-        category: 'Rotor Assembly',
-        shortRole: 'Offshore wind energy extraction',
-        badge: '80m Carbon Spar',
-        description: 'Blades built with high-modulus carbon fiber spars and vacuum-infused epoxy resin to endure ocean storm turbulence.',
-        specs: [
-          { label: 'Rotor Diameter', value: '164 m' },
-          { label: 'Swept Area', value: '21,124 sq m' },
-          { label: 'Blade Weight', value: '28.5 tonnes each' }
-        ],
-        mechanism: 'Active electromechanical pitch bearings feather blades during gale storms above 28 m/s to prevent structural fatigue while surviving storm winds up to 70 m/s.'
-      },
-      {
-        id: 'direct-drive-gen',
-        number: '02',
-        name: 'Direct-Drive Permanent Magnet Generator',
-        category: 'Drivetrain',
-        shortRole: 'Gearless energy conversion',
-        badge: 'No Gearbox Required',
-        description: 'A multi-pole synchronous ring generator directly coupled to the hub, eliminating high-wear gearboxes and offshore servicing requirements.',
-        specs: [
-          { label: 'Rated Capacity', value: '8,000 kW (8.0 MW)' },
-          { label: 'Poles', value: '120 Poles' },
-          { label: 'Cooling', value: 'Closed-loop Liquid Glycol' }
-        ],
-        mechanism: 'As the hub rotates at 7-12 RPM, permanent neodymium magnets pass copper stator poles to induce electricity directly without gear acceleration.'
-      },
-      {
-        id: 'marine-nacelle',
-        number: '03',
-        name: 'Pressurized C5-M Nacelle Housing',
-        category: 'Protective Enclosure',
-        shortRole: 'Saline corrosion isolation',
-        badge: 'Positive-Air Pressure',
-        description: 'Maintains positive interior air pressure with desalinating intake filters, keeping ocean saltwater spray out of electrical cabinets.',
-        specs: [
-          { label: 'Rating', value: 'ISO 12944 C5-M Maritime' },
-          { label: 'Internal Crane', value: '10 Tonnes Capacity' },
-          { label: 'Environmental', value: 'IP66 Sealed Cabinets' }
-        ],
-        mechanism: 'Air blowers pump dehumidified, filtered fresh air through the housing, preventing moisture accumulation on power inverters and transformers.'
-      },
-      {
-        id: 'subsea-cables',
-        number: '04',
-        name: '66 kV Subsea Array Cables',
-        category: 'Grid Transmission',
-        shortRole: 'Ocean floor power transmission',
-        badge: 'Armored XLPE Cable',
-        description: 'High-voltage copper conductors with cross-linked polyethylene insulation, lead water-barrier sheathing, and galvanized steel armor.',
-        specs: [
-          { label: 'Voltage', value: '66 kV 3-Phase AC' },
-          { label: 'Depth Rating', value: 'Up to 250 meters' },
-          { label: 'Armor', value: 'Double Wire Steel Armor' }
-        ],
-        mechanism: 'Transmits three-phase power directly into offshore substation collector platforms before stepping up to 220 kV for mainland landing.'
-      }
-    ]
+      'A lift-driven vertical-axis wind turbine characterized by curved or H-rotor aerofoil blades attached to a central vertical shaft. Because rotation is perpendicular to wind flow, the turbine accepts wind from any direction without requiring a motorized yaw orientation mechanism.',
+    technicalOverview: {
+      rotorArchitecture: 'Curved Troposkein or H-Rotor Aerofoil Blades',
+      drivetrainArchitecture: 'Direct Vertical Shaft Coupling to Base Machinery',
+      generatorArchitecture: 'Ground-Level Generator and Power Electronics',
+      gridInterface: 'Power Electronic Converter Interface',
+      orientationSystem: 'Omnidirectional (No Yaw Mechanism Required)'
+    },
+    keyPoints: [
+      'Accepts wind from any azimuth angle without yaw drive tracking',
+      'Heavy generator and mechanical equipment are situated at ground level for easier maintenance',
+      'Generates power through aerodynamic lift across curved aerofoil blades',
+      'Interactive 3D component disassembly for this configuration is in development'
+    ],
+    parts: []
   },
   {
-    id: 'skybreeze-1500',
-    name: 'EasyWindmill SkyBreeze-1500',
-    subtitle: '1.5 MW Distributed Community Turbine',
-    category: 'community',
-    categoryLabel: 'Community and Distributed',
-    badge: 'Acoustic Serrations',
-    badgeType: 'community',
-    image: '/turbines/skybreeze-1500.svg',
-    is3DReady: false,
-    specs: {
-      ratedPower: '1.5 MW',
-      rotorDiameter: '82 m',
-      cutInWind: '2.5 m/s',
-      ratedWind: '10.5 m/s',
-      cutOutWind: '20.0 m/s',
-      hubHeight: '75 m',
-      efficiency: '46.5% Betz',
-      blades: 'Acoustic Serrated Blades'
-    },
-    keyBullets: [
-      'Acoustic trailing-edge blade serrations reduce noise emissions below 38.5 dBA at 300m',
-      'Grid-forming smart inverter with optional battery storage synchronization',
-      'Standard road-freight transportable modules without oversize convoy permits',
-      'Engineered for agricultural cooperatives, university campuses, and commercial parks'
-    ],
+    id: 'savonius-vawt',
+    groupId: 'group-a',
+    groupName: 'Rotor Orientation and Aerodynamics',
+    categoryLabel: 'Vertical-Axis Aerodynamics',
+    name: 'Savonius Vertical-Axis Wind Turbine (VAWT)',
+    subtitle: 'Drag-based scooped vertical-axis rotor',
+    image: '/turbines/savonius-vawt.svg',
+    isExplosionActive: false,
+    status: 'In development',
+    badge: 'Classification Reference',
+    badgeType: 'reference',
     description:
-      'A compact, quiet turbine designed for distributed microgrids, agricultural cooperatives, and institutional campuses seeking local clean power generation with low acoustic impact.',
-    parts: [
-      {
-        id: 'serrated-blades',
-        number: '01',
-        name: 'Acoustic-Serrated Rotor Blades',
-        category: 'Aerodynamic System',
-        shortRole: 'Low-noise wind extraction',
-        badge: 'Low-Noise Aerofoil',
-        description: 'Trailing edge serrations break down turbulent eddies into smaller vortex structures, significantly reducing audible wind shear.',
-        specs: [
-          { label: 'Blade Length', value: '39.8 m' },
-          { label: 'Sound Level', value: 'Under 38.5 dBA at 300m' },
-          { label: 'Tip Speed Ratio', value: '7.8 Optimum' }
-        ],
-        mechanism: 'Combines micro-serrations with soft aero-transition caps to silence air shearing while maintaining high lift-to-drag aerodynamic efficiency.'
-      },
-      {
-        id: 'microgrid-inverter',
-        number: '02',
-        name: 'Smart 4-Quadrant Microgrid Inverter',
-        category: 'Power Electronics',
-        shortRole: 'Microgrid synchronization',
-        badge: 'Island-Mode Capable',
-        description: 'Provides autonomous grid-forming voltage support, allowing local facilities to maintain power stability during transmission blackouts.',
-        specs: [
-          { label: 'Grid Voltage', value: '400V / 690V' },
-          { label: 'Response Time', value: 'Under 15 ms' },
-          { label: 'Islanding', value: 'Autonomous Control' }
-        ],
-        mechanism: 'Digital signal processors dynamically balance active and reactive power to prevent voltage sags during sudden industrial load changes.'
-      },
-      {
-        id: 'compact-nacelle',
-        number: '03',
-        name: 'Modular Transportable Nacelle',
-        category: 'Mechanical Housing',
-        shortRole: 'Low-cost road transit',
-        badge: 'Standard Road Width',
-        description: 'Compact external dimensions allow transportation on standard flatbed trailers on rural roads without special highway escorts.',
-        specs: [
-          { label: 'Total Mass', value: '42 tonnes' },
-          { label: 'Road Width', value: '3.4 m' },
-          { label: 'Erection Time', value: '48 hours on site' }
-        ],
-        mechanism: 'Pre-assembled internal mechanical modules enable rapid rigging with standard mobile rental cranes.'
-      }
-    ]
+      'A drag-driven vertical-axis turbine featuring characteristic S-shaped overlapping semicircular buckets. Wind pushes with high drag against the concave bucket while flowing smoothly over the returning convex bucket, generating high starting torque at low wind velocities.',
+    technicalOverview: {
+      rotorArchitecture: 'S-Shaped Semicircular Overlapping Drag Buckets',
+      drivetrainArchitecture: 'Central Vertical Shaft Direct to Base Bearings',
+      generatorArchitecture: 'Ground-Mounted Low-Speed Alternator',
+      gridInterface: 'Battery Storage or Direct Low-Voltage Rectifier',
+      orientationSystem: 'Omnidirectional (Self-Orienting Without Yaw Controls)'
+    },
+    keyPoints: [
+      'Operates primarily on differential aerodynamic drag rather than lift',
+      'High starting torque allows reliable self-starting at low cut-in wind speeds',
+      'Used primarily in distributed, off-grid, and auxiliary low-power installations',
+      'Interactive 3D component disassembly for this configuration is in development'
+    ],
+    parts: []
+  },
+
+  // =========================================================================
+  // GROUP B: DRIVETRAIN CONFIGURATIONS
+  // =========================================================================
+  {
+    id: 'geared-drivetrain',
+    groupId: 'group-b',
+    groupName: 'Drivetrain Configurations',
+    categoryLabel: 'Drivetrain Architecture',
+    name: 'Geared Wind Turbine Drivetrain',
+    subtitle: 'Mechanical speed increaser with high-speed generator',
+    image: '/turbines/geared-drivetrain.svg',
+    isExplosionActive: false,
+    status: 'In development',
+    badge: 'Classification Reference',
+    badgeType: 'reference',
+    description:
+      'A drivetrain arrangement that uses a mechanical gearbox between the low-speed main rotor shaft and the generator. The gearbox multiplies rotational speed by a factor of 80 to 100, enabling the use of a physically compact, lighter-weight high-speed generator.',
+    technicalOverview: {
+      gearboxStages: 'Epicyclic Planetary Stage followed by Parallel Helical Gear Stages',
+      speedStepUp: 'Converts Approx. 10-20 RPM Input to 1,000-1,800 RPM Output',
+      generatorFrame: 'Compact High-Speed Generator (Induction or Synchronous)',
+      brakingMethod: 'High-Speed Shaft Disc Brake plus Aerodynamic Blade Feathering',
+      lubricationSystem: 'Forced-Oil Filtered Lubrication with Thermal Oil Cooling'
+    },
+    keyPoints: [
+      'Increases rotational speed to allow smaller generator dimensions and lower copper mass',
+      'Employs planetary gearing to distribute high rotor torque across multiple contact meshes',
+      'Requires active lubrication, oil conditioning, and vibration monitoring',
+      'Interactive 3D component disassembly for this configuration is in development'
+    ],
+    parts: []
   },
   {
-    id: 'aeropeak-5000',
-    name: 'EasyWindmill AeroPeak-5000',
-    subtitle: '5.0 MW Sub-Zero Alpine Turbine',
-    category: 'extreme',
-    categoryLabel: 'Extreme Cold Climate',
-    badge: 'De-Icing Matrix',
-    badgeType: 'alpine',
-    image: '/turbines/aeropeak-5000.svg',
-    is3DReady: false,
-    specs: {
-      ratedPower: '5.0 MW',
-      rotorDiameter: '145 m',
-      cutInWind: '3.0 m/s',
-      ratedWind: '11.0 m/s',
-      cutOutWind: '26.0 m/s',
-      hubHeight: '120 m',
-      efficiency: '48.1% Betz',
-      blades: 'Resistive De-Icing Matrix'
-    },
-    keyBullets: [
-      'Continuous electro-thermal blade leading edge heating prevents ice accumulation',
-      'Synthetic arctic lubricants and internal heating elements operational down to -45 C',
-      'Wide blade chord geometry optimized for low air density at high mountain altitudes',
-      'Dual reinforced lightning receptor down-conductors rated for 200 kA strikes'
-    ],
+    id: 'direct-drive',
+    groupId: 'group-b',
+    groupName: 'Drivetrain Configurations',
+    categoryLabel: 'Drivetrain Architecture',
+    name: 'Direct-Drive Wind Turbine Drivetrain',
+    subtitle: 'Gearless drivetrain with low-speed multi-pole generator',
+    image: '/turbines/direct-drive.svg',
+    isExplosionActive: false,
+    status: 'In development',
+    badge: 'Classification Reference',
+    badgeType: 'reference',
     description:
-      'Engineered for alpine passes and sub-zero highland regions. The AeroPeak-5000 operates continuously through blizzards, freezing fog, and sub-zero temperatures.',
-    parts: [
-      {
-        id: 'heated-blades',
-        number: '01',
-        name: 'Electro-Thermal Blade Heating Matrix',
-        category: 'Aerodynamic Anti-Ice',
-        shortRole: 'Ice shedding and prevention',
-        badge: 'Resistive Elements',
-        description: 'Embedded resistive heating layers on blade leading edges melt rime ice instantly before it can alter the aerofoil contour.',
-        specs: [
-          { label: 'Heating Power', value: '45 kW per blade' },
-          { label: 'Operating Range', value: '-45 C to +40 C' },
-          { label: 'Ice Detection', value: 'Resonant Sensors' }
-        ],
-        mechanism: 'Pulse heating creates a thin liquid water boundary layer beneath ice sheets, letting aerodynamic airflow sweep ice off safely.'
-      },
-      {
-        id: 'cold-climate-nacelle',
-        number: '02',
-        name: 'Insulated Climate Nacelle',
-        category: 'Housing and Thermal Control',
-        shortRole: 'Internal component warming',
-        badge: 'Thermal Insulation',
-        description: 'Heated mechanical rooms and pre-lubricated high-viscosity synthetic oils protect gears and bearings from cold embrittlement.',
-        specs: [
-          { label: 'Insulation', value: '50mm Polyurethane Foam' },
-          { label: 'Aux Heating', value: '18 kW Redundant Heaters' },
-          { label: 'Cold Start', value: 'Down to -40 C' }
-        ],
-        mechanism: 'Thermostatically controlled heaters keep generator windings and hydraulic pumps at operating viscosity even during calm, freezing nights.'
-      },
-      {
-        id: 'reinforced-yaw',
-        number: '03',
-        name: 'High-Torque Alpine Yaw Drive',
-        category: 'Orientation Subsystem',
-        shortRole: 'Ridge-top wind tracking',
-        badge: 'Dual Slew Motors',
-        description: 'Six reinforced planetary gear drives hold the turbine firmly into unpredictable valley cross-winds and mountain turbulence.',
-        specs: [
-          { label: 'Yaw Motors', value: '6x 11 kW Planetary' },
-          { label: 'Holding Torque', value: '4,800 kNm' },
-          { label: 'Bearing Type', value: 'Triple-Row Roller Bearing' }
-        ],
-        mechanism: 'Hydraulic disc brakes with sintered metallic pads prevent wind chatter and oscillation in violent ridge-top updrafts.'
-      }
-    ]
+      'A gearless drivetrain architecture that eliminates the mechanical gearbox entirely. The rotor hub is coupled directly to a large-diameter, low-speed multi-pole ring generator. Removing the gearbox reduces mechanical wear parts, oil maintenance, and acoustic gear mesh vibrations.',
+    technicalOverview: {
+      gearboxElimination: 'No Mechanical Gearbox (Direct Hub-to-Rotor Coupling)',
+      generatorDesign: 'Large-Diameter Multi-Pole Ring Generator (Typically 60-120 Poles)',
+      operatingSpeed: 'Operates at Rotor Speed (Approx. 7-15 RPM)',
+      powerElectronics: '100% Full-Scale Back-to-Back Frequency Converter',
+      maintenanceProfile: 'No Gearbox Oil Changes or Gear Mesh Wear Interfaces'
+    },
+    keyPoints: [
+      'Eliminates the gearbox to reduce drivetrain mechanical failure modes',
+      'Requires a significantly larger generator diameter and mass to produce high torque at low RPM',
+      'Relies on a full-scale power converter to decouple generator frequency from the electrical grid',
+      'Interactive 3D component disassembly for this configuration is in development'
+    ],
+    parts: []
+  },
+
+  // =========================================================================
+  // GROUP C: GENERATOR TECHNOLOGIES
+  // =========================================================================
+  {
+    id: 'dfig-generator',
+    groupId: 'group-c',
+    groupName: 'Generator Technologies',
+    categoryLabel: 'Generator Machine',
+    name: 'Doubly-Fed Induction Generator (DFIG)',
+    subtitle: 'Wound-rotor induction machine with partial-scale power converter',
+    image: '/turbines/dfig-generator.svg',
+    isExplosionActive: false,
+    status: 'In development',
+    badge: 'Classification Reference',
+    badgeType: 'reference',
+    description:
+      'An asynchronous wound-rotor generator widely deployed in modern geared turbines. The stator connects directly to the utility grid, while the wound rotor is connected via slip rings to a bidirectional power converter rated for approximately 30% of total turbine capacity, enabling variable-speed operation at lower converter cost.',
+    technicalOverview: {
+      machineTopology: 'Wound-Rotor Induction Machine with External Slip Rings',
+      statorConnection: 'Direct Synchronized Connection to 50/60 Hz AC Grid (~70% Power)',
+      rotorConnection: 'Bidirectional AC-DC-AC Back-to-Back Converter (~30% Power)',
+      speedRange: 'Variable-Speed Window (+/- 30% Around Synchronous Speed)',
+      converterRating: 'Partial-Scale (Approx. 30% of Rated Generator Output)'
+    },
+    keyPoints: [
+      'Enables variable-speed rotor operation with a smaller, lower-cost partial-scale converter',
+      'Stator feeds the bulk of generated electricity directly into the grid',
+      'Slip rings require periodic inspection and brush replacement',
+      'Interactive 3D component disassembly for this configuration is in development'
+    ],
+    parts: []
+  },
+  {
+    id: 'pmsg-generator',
+    groupId: 'group-c',
+    groupName: 'Generator Technologies',
+    categoryLabel: 'Generator Machine',
+    name: 'Permanent-Magnet Synchronous Generator (PMSG)',
+    subtitle: 'Direct-drive ring generator with permanent-magnet rotor and full-scale converter',
+    image: '/turbines/pmsg-generator.jpg',
+    isExplosionActive: true,
+    status: 'Interactive 3D View Available',
+    badge: 'Interactive 3D View Active',
+    badgeType: 'active',
+    description:
+      'A synchronous ring generator utilizing high-flux permanent magnets affixed to the rotor. The gearless direct-drive architecture eliminates the mechanical gearbox entirely, coupling the aerodynamic rotor hub directly to the generator low-speed shaft. Output connects to the grid via a 100% full-scale frequency converter, decoupling rotor speed from grid frequency.',
+    technicalOverview: {
+      rotorArchitecture: 'Permanent-Magnet Ring Rotor (Direct Low-Speed Coupling)',
+      drivetrainArchitecture: 'Gearless Direct-Drive (No Speed-Increasing Gearbox)',
+      generatorArchitecture: 'Permanent-Magnet Synchronous Machine (PMSG)',
+      gridInterface: 'Full-Scale 4-Quadrant Back-to-Back Frequency Converter'
+    },
+    keyPoints: [
+      'Interactive 3D disassembly experience with selectable generator subassemblies',
+      'Eliminates gearbox failure modes, lubrication servicing, and gear mesh acoustic vibration',
+      'High-energy permanent magnets provide high magnetic flux across the radial air gap without copper excitation losses',
+      'Full-scale converter provides comprehensive grid fault ride-through and decoupled reactive power support'
+    ],
+    parts: PMSG_PARTS
+  },
+  {
+    id: 'scig-generator',
+    groupId: 'group-c',
+    groupName: 'Generator Technologies',
+    categoryLabel: 'Generator Machine',
+    name: 'Squirrel-Cage Induction Generator (SCIG)',
+    subtitle: 'Brushless asynchronous machine with narrow operating slip',
+    image: '/turbines/scig-generator.svg',
+    isExplosionActive: false,
+    status: 'In development',
+    badge: 'Classification Reference',
+    badgeType: 'reference',
+    description:
+      'A mechanically simple and robust asynchronous generator using a solid cylindrical rotor with embedded short-circuited conducting bars. Operates at a nearly fixed speed with a narrow slip range (1-2%). Stator connects to the grid, drawing reactive magnetizing current from capacitor banks or the grid.',
+    technicalOverview: {
+      rotorConstruction: 'Conducting Aluminum or Copper Bars Short-Circuited by End Rings',
+      operatingSpeed: 'Nearly Fixed Speed (1-2% Negative Slip Relative to Grid Frequency)',
+      reactiveCompensation: 'Requires Capacitor Banks or Static VAR Compensator for Magnetization',
+      startingMethod: 'Soft-Starter Thyristor Unit to Limit Grid Inrush Currents',
+      drivetrainRelationship: 'Exclusively Paired with Speed-Increasing Gearboxes'
+    },
+    keyPoints: [
+      'Highly durable brushless rotor design with minimal mechanical maintenance requirements',
+      'Fixed-speed operation transmits aerodynamic wind gusts directly into drivetrain mechanical torque',
+      'Historically foundational in classic Danish-concept utility wind turbines',
+      'Interactive 3D component disassembly for this configuration is in development'
+    ],
+    parts: []
+  },
+
+  // =========================================================================
+  // GROUP D: INSTALLATION ENVIRONMENT
+  // =========================================================================
+  {
+    id: 'onshore-environment',
+    groupId: 'group-d',
+    groupName: 'Installation Environments',
+    categoryLabel: 'Installation Environment',
+    name: 'Onshore Wind Turbine Installation',
+    subtitle: 'Terrestrial deployment with concrete gravity or rock foundations',
+    image: '/turbines/onshore-environment.svg',
+    isExplosionActive: false,
+    status: 'In development',
+    badge: 'Classification Reference',
+    badgeType: 'reference',
+    description:
+      'Describes wind turbines installed on land across plains, ridgelines, and hillsides. Foundations typically comprise reinforced concrete gravity bases or post-tensioned rock anchors. Engineering must balance wind shear gains at high hub heights with road transport limits and local terrain complexity.',
+    technicalOverview: {
+      foundationTypes: 'Reinforced Concrete Spread Footings, Piled Slabs, or Post-Tensioned Rock Anchors',
+      windCharacteristics: 'Subject to Terrain Friction, Surface Roughness, and High Wind Shear',
+      logisticalConstraints: 'Road Highway Clearance, Turning Radii, and Mobile Crane Availability',
+      gridInterconnect: 'Direct Buried Medium-Voltage Collection Cables to Local Substation',
+      environmentalFactors: 'Acoustic Setback Requirements, Shadow Flicker, and Complex Topography'
+    },
+    keyPoints: [
+      'Describes the physical deployment environment, not a unique rotor or generator design',
+      'Capital installation costs are generally lower than marine installations',
+      'Blade lengths and tower diameters are constrained by road transport logistics',
+      'Interactive 3D component disassembly for this configuration is in development'
+    ],
+    parts: []
+  },
+  {
+    id: 'offshore-environment',
+    groupId: 'group-d',
+    groupName: 'Installation Environments',
+    categoryLabel: 'Installation Environment',
+    name: 'Offshore Marine Wind Turbine Installation',
+    subtitle: 'Marine deployment with monopile, jacket, or floating foundations',
+    image: '/turbines/offshore-environment.svg',
+    isExplosionActive: false,
+    status: 'In development',
+    badge: 'Classification Reference',
+    badgeType: 'reference',
+    description:
+      'Describes wind turbines installed in marine environments to capture stronger, smoother, and more consistent ocean winds. Structures are supported by seabed monopiles, space-frame jackets, gravity bases, or anchored floating platforms, requiring ISO 12944 C5-M marine corrosion isolation.',
+    technicalOverview: {
+      substructureTypes: 'Seabed Driven Monopiles, Jacket Space Frames, Suction Buckets, or Floating Spars',
+      windCharacteristics: 'Low Surface Roughness Yields Higher, Smoother, and More Continuous Winds',
+      marineCorrosionControl: 'ISO 12944 C5-M Marine Coating, Cathodic Protection, and Positive-Pressure Nacelles',
+      powerExport: 'Armored 66 kV Inter-Array Subsea Cables to Offshore Collector Substation',
+      logisticsMethodology: 'Specialized Offshore Jack-Up Installation Vessels and Floating Heavy Cranes'
+    },
+    keyPoints: [
+      'Describes the marine operating environment, distinct from rotor or generator classifications',
+      'Enables significantly larger rotor dimensions due to maritime vessel transport',
+      'Requires specialized maritime corrosion isolation, internal cranes, and helidecks',
+      'Interactive 3D component disassembly for this configuration is in development'
+    ],
+    parts: []
   }
 ];

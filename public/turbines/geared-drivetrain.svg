@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <pattern id="grid-geared" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(15, 23, 42, 0.06)" stroke-width="0.8"/>
+    </pattern>
+  </defs>
+
+  <rect width="800" height="450" fill="#f8fafc"/>
+  <rect width="800" height="450" fill="url(#grid-geared)"/>
+
+  <!-- Classification Header -->
+  <rect x="40" y="24" width="230" height="28" rx="4" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="52" y="42" fill="#0369a1" font-family="sans-serif" font-weight="700" font-size="11" letter-spacing="0.08em">DRIVETRAIN CONFIGURATION: GROUP B</text>
+
+  <!-- Nacelle Bedplate Outline (Cutaway) -->
+  <path d="M 60 130 L 740 130 L 740 330 L 60 330 Z" fill="rgba(241, 245, 249, 0.9)" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="70" y="152" fill="#64748b" font-family="monospace" font-size="10">NACELLE ENCLOSURE CUTAWAY</text>
+
+  <!-- 1. Hub Flange -->
+  <path d="M 80 180 L 130 190 L 130 270 L 80 280 Z" fill="#e2e8f0" stroke="#0f172a" stroke-width="2"/>
+  <circle cx="105" cy="230" r="14" fill="#0284c7"/>
+  <text x="105" y="305" text-anchor="middle" fill="#0f172a" font-family="sans-serif" font-size="11" font-weight="700">Rotor Hub</text>
+  <text x="105" y="320" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">10-20 RPM</text>
+
+  <!-- 2. Low-Speed Shaft -->
+  <rect x="130" y="212" width="130" height="36" fill="#cbd5e1" stroke="#0f172a" stroke-width="2"/>
+  <!-- Main Pillow Block Bearing -->
+  <rect x="165" y="195" width="45" height="70" rx="3" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
+  <circle cx="187" cy="230" r="10" fill="none" stroke="#0284c7" stroke-width="2"/>
+  <text x="187" y="180" text-anchor="middle" fill="#0369a1" font-family="sans-serif" font-size="10" font-weight="600">Main Bearing</text>
+
+  <!-- 3. Speed-Increasing Gearbox -->
+  <rect x="260" y="170" width="160" height="120" rx="6" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+  <rect x="270" y="180" width="60" height="100" fill="rgba(2, 132, 199, 0.08)" stroke="#334155" stroke-width="1.5"/>
+  <text x="300" y="235" text-anchor="middle" fill="#334155" font-family="monospace" font-size="9" font-weight="700">PLANETARY</text>
+  <rect x="340" y="195" width="70" height="70" fill="rgba(2, 132, 199, 0.12)" stroke="#334155" stroke-width="1.5"/>
+  <text x="375" y="235" text-anchor="middle" fill="#334155" font-family="monospace" font-size="9" font-weight="700">HELICAL</text>
+  <text x="340" y="305" text-anchor="middle" fill="#0f172a" font-family="sans-serif" font-size="11" font-weight="700">Multi-Stage Gearbox</text>
+  <text x="340" y="320" text-anchor="middle" fill="#0284c7" font-family="monospace" font-size="9">Gear Ratio ~ 1:80 to 1:100</text>
+
+  <!-- 4. High-Speed Shaft & Mechanical Brake -->
+  <rect x="420" y="222" width="70" height="16" fill="#94a3b8" stroke="#0f172a" stroke-width="1.5"/>
+  <!-- Brake Disc -->
+  <rect x="440" y="200" width="12" height="60" rx="2" fill="#334155" stroke="#0f172a" stroke-width="1.5"/>
+  <rect x="436" y="195" width="20" height="15" fill="#e06b52" stroke="#0f172a" stroke-width="1"/>
+  <text x="446" y="180" text-anchor="middle" fill="#e06b52" font-family="sans-serif" font-size="10" font-weight="600">Disc Brake</text>
+
+  <!-- 5. High-Speed Generator -->
+  <rect x="490" y="185" width="150" height="90" rx="6" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+  <line x1="505" y1="195" x2="505" y2="265" stroke="#cbd5e1" stroke-width="3"/>
+  <line x1="520" y1="195" x2="520" y2="265" stroke="#cbd5e1" stroke-width="3"/>
+  <line x1="535" y1="195" x2="535" y2="265" stroke="#cbd5e1" stroke-width="3"/>
+  <text x="565" y="225" text-anchor="middle" fill="#0f172a" font-family="sans-serif" font-size="11" font-weight="700">High-Speed Generator</text>
+  <text x="565" y="242" text-anchor="middle" fill="#0369a1" font-family="monospace" font-size="9.5">1,000-1,800 RPM</text>
+  <text x="565" y="305" text-anchor="middle" fill="#64748b" font-family="sans-serif" font-size="10">Compact Frame Size</text>
+
+  <!-- 6. Power Converter Output -->
+  <path d="M 640 230 L 690 230 L 690 350" fill="none" stroke="#0284c7" stroke-width="2.5"/>
+  <rect x="660" y="350" width="80" height="40" rx="4" fill="#ffffff" stroke="#0284c7" stroke-width="1.5"/>
+  <text x="700" y="375" text-anchor="middle" fill="#0369a1" font-family="sans-serif" font-size="9.5" font-weight="600">Power Converter</text>
+
+  <!-- Flow Direction Arrows -->
+  <path d="M 120 160 L 640 160" fill="none" stroke="#0284c7" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <polygon points="640,157 648,160 640,163" fill="#0284c7"/>
+  <text x="380" y="152" text-anchor="middle" fill="#0284c7" font-family="monospace" font-size="9.5">MECHANICAL TORQUE PATH (SPEED STEP-UP)</text>
+
+  <!-- Technical Summary Footnote -->
+  <text x="60" y="420" fill="#475569" font-family="sans-serif" font-size="10.5">
+    A geared drivetrain uses a mechanical gearbox to increase rotational speed for the generator, enabling a smaller, lighter electrical machine.
+  </text>
+</svg>
