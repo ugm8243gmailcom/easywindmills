@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "server": "node server/index.js",
+    "test": "node --test test/**/*.test.js",
     "postinstall": "node -e \"const f='node_modules/rollup/dist/native.js'; if(require('fs').existsSync(f)){let c=require('fs').readFileSync(f,'utf8'); if(!c.includes('@rollup/wasm-node/dist/native.js')){c=c.replace('return require(id);\\n\\t} catch (error) {','return require(id);\\n\\t} catch (error) {\\n\\t\\ttry { return require(\\'@rollup/wasm-node/dist/native.js\\'); } catch {}'); require('fs').writeFileSync(f,c);}}\""
   },
   "dependencies": {

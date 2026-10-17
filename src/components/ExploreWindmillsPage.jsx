@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { TURBINE_MODELS, CLASSIFICATION_GROUPS } from '../data/turbinesData';
 import ExploreParts from './ExploreParts';
 import ExplorePMSG from './ExplorePMSG';
+import SimulationPanel from './SimulationPanel';
 
 export default function ExploreWindmillsPage({ onBackToHome }) {
   // Active turbine view: null means catalogue list view; when set, shows detail view
@@ -366,7 +367,10 @@ export default function ExploreWindmillsPage({ onBackToHome }) {
               {selectedTurbine.id === 'pmsg-generator' ? (
                 <ExplorePMSG />
               ) : (
-                <ExploreParts />
+                <>
+                  <ExploreParts />
+                  <SimulationPanel />
+                </>
               )}
             </div>
           </div>
