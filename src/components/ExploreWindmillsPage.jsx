@@ -303,11 +303,12 @@ export default function ExploreWindmillsPage({ onBackToHome }) {
 
         {/* ===================================================================
             VIEW 2: ACTIVE TURBINE EXPLORATION (DETAIL VIEW)
+            ORDER: 1. 3D Model First -> 2. Explanations -> 3. Simulation
            =================================================================== */}
         {selectedTurbine && (
           <div className="turbine-detail-view">
-            {/* Detail View Header */}
-            <div className="detail-header-panel">
+            {/* Detail View Header Top Bar */}
+            <div className="detail-header-panel detail-header-top-bar-only">
               <div className="detail-header-top">
                 <button
                   type="button"
@@ -322,22 +323,33 @@ export default function ExploreWindmillsPage({ onBackToHome }) {
                 </button>
 
                 <div className="active-config-tag">
-                  <span>Active Inspection Experience</span>
+                  <span>Interactive Inspection: {selectedTurbine.name}</span>
                 </div>
               </div>
+            </div>
 
-              {/* Turbine Technical Introduction Banner (Replaces fabricated specification strip) */}
+            {/* 1. FIRST: 3D MODEL INTERACTIVE DISASSEMBLY STAGE */}
+            <div className="embedded-explore-wrapper order-first-3d">
+              {selectedTurbine.id === 'pmsg-generator' ? (
+                <ExplorePMSG />
+              ) : (
+                <ExploreParts />
+              )}
+            </div>
+
+            {/* 2. SECOND: TECHNICAL EXPLANATIONS & ARCHITECTURE BREAKDOWN */}
+            <section className="detail-explanations-section" aria-label="Turbine Architecture Breakdown">
               <div className="turbine-hero-banner">
                 <div className="banner-info">
                   <div className="banner-badge-row">
                     <span className="banner-cat-tag">{selectedTurbine.groupName}</span>
-                    <span className="banner-3d-tag">3D Disassembly View Active</span>
+                    <span className="banner-3d-tag">Verified Engineering Analysis</span>
                   </div>
                   <h2 className="banner-title">{selectedTurbine.name}</h2>
                   <p className="banner-desc">{selectedTurbine.description}</p>
                 </div>
 
-                {/* Technical Configuration Overview (Factual engineering parameters) */}
+                {/* Technical Configuration Overview */}
                 <div className="banner-config-breakdown">
                   <h4 className="config-box-title">Technical Configuration Summary</h4>
                   <div className="config-grid">
@@ -360,18 +372,27 @@ export default function ExploreWindmillsPage({ onBackToHome }) {
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Interactive Disassembly Experience: Geared HAWT or Direct-Drive PMSG */}
-            <div className="embedded-explore-wrapper">
-              {selectedTurbine.id === 'pmsg-generator' ? (
-                <ExplorePMSG />
-              ) : (
-                <>
-                  <ExploreParts />
-                  <SimulationPanel />
-                </>
-              )}
+              {/* Core Engineering Principles & Mechanics */}
+              <div className="detail-principles-panel">
+                <div className="principles-panel-header">
+                  <h3 className="principles-title">Core Mechanical & Electrical Principles</h3>
+                  <span className="principles-subtitle">Operational conversion dynamics for this architecture</span>
+                </div>
+                <div className="detail-principles-grid">
+                  {selectedTurbine.keyPoints.map((point, idx) => (
+                    <div key={idx} className="detail-principle-item">
+                      <div className="principle-bullet-dot" />
+                      <div className="principle-text-body">{point}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* 3. THIRD: SIMULATION & REAL-TIME PHYSICS CALCULATOR */}
+            <div className="detail-simulation-wrapper">
+              <SimulationPanel isGeneratorView={selectedTurbine.id === 'pmsg-generator'} />
             </div>
           </div>
         )}

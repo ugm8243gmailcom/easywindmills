@@ -1,84 +1,31 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useMemo } from 'react';
+import { computeRealtimeSimulation, BETZ_LIMIT } from '../utils/turbinePhysics';
 
-export default function SimulationPanel() {
+export default function SimulationPanel({ isGeneratorView = false }) {
   const [windSpeed, setWindSpeed] = useState(10.0);
   const [rotorRadius, setRotorRadius] = useState(40.0);
   const [airDensity, setAirDensity] = useState(1.225);
   const [useEducationalAssumptions, setUseEducationalAssumptions] = useState(true);
 
-  const [backendStatus, setBackendStatus] = useState({ online: false, checking: true, message: 'Checking backend...' });
-  const [simResults, setSimResults] = useState(null);
-  const [simLoading, setSimLoading] = useState(false);
-  const [simError, setSimError] = useState(null);
+  // Synchronous client-side deterministic physics evaluation with ZERO network or API requests
+  const simResults = useMemo(() => {
+    return computeRealtimeSimulation({
+      windSpeed_mps: windSpeed,
+      rotorRadius_m: rotorRadius,
+      airDensity_kgpm3: airDensity,
+      useEducationalAssumptions
+    });
+  }, [windSpeed, rotorRadius, airDensity, useEducationalAssumptions]);
 
-  // Check backend health on mount
-  useEffect(() => {
-    let isMounted = true;
-    async function checkHealth() {
-      try {
-        const res = await fetch('/api/health');
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        if (isMounted) {
-          setBackendStatus({
-            online: true,
-            checking: false,
-            service: data.service,
-            version: data.version,
-            message: 'Live Backend Connected'
-          });
-        }
-      } catch (err) {
-        if (isMounted) {
-          setBackendStatus({
-            online: false,
-            checking: false,
-            message: `Backend Connection Offline: ${err.message}`
-          });
-        }
-      }
-    }
-    checkHealth();
-    return () => { isMounted = false; };
-  }, []);
+  const { geometry, aerodynamics, rotorDynamics, drivetrain, electrical } = simResults.results;
 
-  // Run calculation
-  const executeCalculation = useCallback(async (speed, radius, density, assumptions) => {
-    setSimLoading(true);
-    setSimError(null);
-    try {
-      const res = await fetch('/api/simulation/calculate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          windSpeed_mps: parseFloat(speed),
-          rotorRadius_m: parseFloat(radius),
-          airDensity_kgpm3: parseFloat(density),
-          useEducationalAssumptions: assumptions
-        })
-      });
-
-      if (!res.ok) {
-        const errPayload = await res.json().catch(() => ({}));
-        throw new Error(errPayload.message || `Calculation failed with HTTP ${res.status}`);
-      }
-
-      const payload = await res.json();
-      setSimResults(payload);
-    } catch (err) {
-      setSimError(err.message);
-    } finally {
-      setSimLoading(false);
-    }
-  }, []);
-
-  // Auto-run when inputs change
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      executeCalculation(windSpeed, rotorRadius, airDensity, useEducationalAssumptions);
-    }, 150);
-    return () => clearTimeout(timer);
-  }, [windSpeed, rotorRadius, airDensity, useEducationalAssumptions, executeCalculation]);
+  const windPresets = [
+    { label: 'Calm (0 m/s)', value: 0 },
+    { label: 'Cut-in (3 m/s)', value: 3.0 },
+    { label: 'Moderate (8 m/s)', value: 8.0 },
+    { label: 'Rated (11.5 m/s)', value: 11.5 },
+    { label: 'Gale (20 m/s)', value: 20.0 }
+  ];
 
   return (
     <section className="simulation-section" id="simulation-calculator">
@@ -87,15 +34,23 @@ export default function SimulationPanel() {
         <div className="simulation-header-bar">
           <div className="simulation-header-titles">
             <div className="simulation-badge-row">
-              <span className="sim-tag-cat">HAWT Engineering Model</span>
-              <span className={`sim-tag-status ${backendStatus.online ? 'status-online' : 'status-offline'}`}>
+              <span className="sim-tag-cat">
+                {isGeneratorView ? 'Direct-Drive PMSG Model' : 'HAWT Engineering Model'}
+              </span>
+              <span className="sim-tag-status status-online">
                 <span className="status-indicator-dot" />
-                <span>{backendStatus.checking ? 'Connecting to API...' : backendStatus.online ? 'Backend Live: /api/simulation' : 'API Offline'}</span>
+                <span>Real-Time Physics Evaluation (Client-Side)</span>
               </span>
             </div>
-            <h3 className="simulation-title">Educational HAWT Aerodynamic and Electrical Simulation</h3>
+            <h3 className="simulation-title">
+              {isGeneratorView
+                ? 'Direct-Drive PMSG Generator Electromechanical Simulation'
+                : 'Educational HAWT Aerodynamic and Electrical Simulation'}
+            </h3>
             <p className="simulation-subtitle">
-              Calculates theoretical kinetic wind power, low-speed shaft mechanical torque, rotational speeds, and generator output based on documented physical equations.
+              {isGeneratorView
+                ? 'Calculates direct mechanical input torque from the hub, low-speed shaft rotation without a gearbox, multi-pole stator back-EMF, and full-scale power converter electrical output.'
+                : 'Calculates theoretical kinetic wind power, low-speed shaft mechanical torque, rotational speeds, and generator output instantly in real time using client-side physics formulas.'}
             </p>
           </div>
         </div>
@@ -123,7 +78,7 @@ export default function SimulationPanel() {
                 type="range"
                 min="0"
                 max="25"
-                step="0.5"
+                step="0.1"
                 value={windSpeed}
                 onChange={(e) => setWindSpeed(parseFloat(e.target.value))}
                 className="sim-slider"
@@ -133,6 +88,20 @@ export default function SimulationPanel() {
                 <span>8 m/s (Moderate)</span>
                 <span>12 m/s (Rated)</span>
                 <span>25 m/s (Gale)</span>
+              </div>
+
+              {/* Quick Presets */}
+              <div className="sim-presets-row">
+                {windPresets.map((preset) => (
+                  <button
+                    key={preset.label}
+                    type="button"
+                    className={`sim-preset-btn ${windSpeed === preset.value ? 'sim-preset-btn--active' : ''}`}
+                    onClick={() => setWindSpeed(preset.value)}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -207,98 +176,113 @@ export default function SimulationPanel() {
                 <line x1="8" y1="21" x2="16" y2="21" />
                 <line x1="12" y1="17" x2="12" y2="21" />
               </svg>
-              <span>Deterministic Physics Output {simLoading && '(Calculating...)'}</span>
+              <span>Deterministic Real-Time Physics Output</span>
             </h4>
 
-            {simError && (
-              <div className="sim-error-alert" role="alert">
-                <span>Calculation Error: {simError}</span>
-              </div>
-            )}
-
-            {simResults && (
-              <div className="sim-outputs-grid">
-                {/* Metric 1: Kinetic Power */}
-                <div className="sim-metric-box">
-                  <div className="metric-header">
-                    <span className="metric-label">Available Wind Power (P_wind)</span>
-                    <span className="metric-eq">0.5 * rho * A * v³</span>
-                  </div>
-                  <div className="metric-main-value">
-                    {simResults.results.aerodynamics.availableWindPower_kW < 1000
-                      ? `${simResults.results.aerodynamics.availableWindPower_kW.toFixed(1)} kW`
-                      : `${(simResults.results.aerodynamics.availableWindPower_kW / 1000).toFixed(2)} MW`}
-                  </div>
-                  <div className="metric-sub">
-                    Swept Area: {Math.round(simResults.results.geometry.sweptArea_m2).toLocaleString()} m²
-                  </div>
+            <div className="sim-outputs-grid">
+              {/* Metric 1: Kinetic Power */}
+              <div className="sim-metric-box">
+                <div className="metric-header">
+                  <span className="metric-label">Available Wind Power (P_wind)</span>
+                  <span className="metric-eq">0.5 * rho * A * v³</span>
                 </div>
-
-                {/* Metric 2: Mechanical Power */}
-                <div className="sim-metric-box">
-                  <div className="metric-header">
-                    <span className="metric-label">Captured Mechanical Power (P_mech)</span>
-                    <span className="metric-eq">P_wind * Cp</span>
-                  </div>
-                  <div className="metric-main-value">
-                    {simResults.results.aerodynamics.mechanicalPower_kW !== null
-                      ? (simResults.results.aerodynamics.mechanicalPower_kW < 1000
-                          ? `${simResults.results.aerodynamics.mechanicalPower_kW.toFixed(1)} kW`
-                          : `${(simResults.results.aerodynamics.mechanicalPower_kW / 1000).toFixed(2)} MW`)
-                      : 'Unavailable'}
-                  </div>
-                  <div className="metric-sub">
-                    {simResults.results.aerodynamics.cp !== null
-                      ? `Rotor Cp: ${simResults.results.aerodynamics.cp} (Betz Limit: 0.593)`
-                      : 'Cp unsupplied'}
-                  </div>
+                <div className="metric-main-value">
+                  {aerodynamics.availableWindPower_kW < 1000
+                    ? `${aerodynamics.availableWindPower_kW.toFixed(1)} kW`
+                    : `${(aerodynamics.availableWindPower_kW / 1000).toFixed(2)} MW`}
                 </div>
-
-                {/* Metric 3: Rotor Speed and Low-Speed Torque */}
-                <div className="sim-metric-box">
-                  <div className="metric-header">
-                    <span className="metric-label">Low-Speed Shaft Dynamics</span>
-                    <span className="metric-eq">tau = P_mech / omega</span>
-                  </div>
-                  <div className="metric-main-value">
-                    {simResults.results.rotorDynamics.rotorRPM !== null
-                      ? `${simResults.results.rotorDynamics.rotorRPM.toFixed(1)} RPM`
-                      : 'Unavailable'}
-                  </div>
-                  <div className="metric-sub">
-                    {simResults.results.rotorDynamics.aerodynamicTorque_Nm !== null
-                      ? `Shaft Torque: ${(simResults.results.rotorDynamics.aerodynamicTorque_Nm / 1000).toFixed(1)} kN*m | Tip Speed: ${simResults.results.rotorDynamics.tipSpeed_mps.toFixed(1)} m/s`
-                      : 'Torque unavailable'}
-                  </div>
-                </div>
-
-                {/* Metric 4: Generator Output and Drivetrain Speed */}
-                <div className="sim-metric-box metric-box--highlight">
-                  <div className="metric-header">
-                    <span className="metric-label">Electrical Generation Output</span>
-                    <span className="metric-eq">P_mech * eta_drive * eta_gen</span>
-                  </div>
-                  <div className="metric-main-value metric-value--highlight">
-                    {simResults.results.electrical.electricalPower_W !== null
-                      ? (simResults.results.electrical.electricalPower_W < 1e6
-                          ? `${(simResults.results.electrical.electricalPower_W / 1000).toFixed(1)} kW`
-                          : `${(simResults.results.electrical.electricalPower_W / 1e6).toFixed(2)} MW`)
-                      : 'Unavailable (Efficiencies required)'}
-                  </div>
-                  <div className="metric-sub">
-                    {simResults.results.drivetrain.generatorShaftRPM !== null
-                      ? `Generator Shaft: ${Math.round(simResults.results.drivetrain.generatorShaftRPM)} RPM (90:1 Gearbox)`
-                      : 'Generator speed unverified'}
-                  </div>
+                <div className="metric-sub">
+                  Swept Area: {Math.round(geometry.sweptArea_m2).toLocaleString()} m² | Rotor Dia: {geometry.rotorDiameter_m.toFixed(1)} m
                 </div>
               </div>
-            )}
+
+              {/* Metric 2: Mechanical Power */}
+              <div className="sim-metric-box">
+                <div className="metric-header">
+                  <span className="metric-label">Captured Mechanical Power (P_mech)</span>
+                  <span className="metric-eq">P_wind * Cp</span>
+                </div>
+                <div className="metric-main-value">
+                  {aerodynamics.mechanicalPower_kW !== null
+                    ? (aerodynamics.mechanicalPower_kW < 1000
+                        ? `${aerodynamics.mechanicalPower_kW.toFixed(1)} kW`
+                        : `${(aerodynamics.mechanicalPower_kW / 1000).toFixed(2)} MW`)
+                    : 'Unavailable (Requires Cp)'}
+                </div>
+                <div className="metric-sub">
+                  {aerodynamics.cp !== null
+                    ? `Rotor Cp: ${aerodynamics.cp} (Betz Limit: ${BETZ_LIMIT.toFixed(3)})`
+                    : 'Cp unsupplied'}
+                </div>
+              </div>
+
+              {/* Metric 3: Rotor Speed and Low-Speed Torque */}
+              <div className="sim-metric-box">
+                <div className="metric-header">
+                  <span className="metric-label">Low-Speed Shaft Dynamics</span>
+                  <span className="metric-eq">tau = P_mech / omega</span>
+                </div>
+                <div className="metric-main-value">
+                  {rotorDynamics.rotorRPM !== null
+                    ? `${rotorDynamics.rotorRPM.toFixed(1)} RPM`
+                    : 'Unavailable'}
+                </div>
+                <div className="metric-sub">
+                  {rotorDynamics.aerodynamicTorque_Nm !== null
+                    ? `Shaft Torque: ${(rotorDynamics.aerodynamicTorque_Nm / 1000).toFixed(1)} kN*m | Tip Speed: ${rotorDynamics.tipSpeed_mps.toFixed(1)} m/s`
+                    : 'Torque unavailable'}
+                </div>
+              </div>
+
+              {/* Metric 4: Generator Output and Drivetrain Speed */}
+              <div className="sim-metric-box metric-box--highlight">
+                <div className="metric-header">
+                  <span className="metric-label">Electrical Generation Output</span>
+                  <span className="metric-eq">P_mech * eta_drive * eta_gen</span>
+                </div>
+                <div className="metric-main-value metric-value--highlight">
+                  {electrical.electricalPower_W !== null
+                    ? (electrical.electricalPower_W < 1e6
+                        ? `${(electrical.electricalPower_W / 1000).toFixed(1)} kW`
+                        : `${(electrical.electricalPower_W / 1e6).toFixed(2)} MW`)
+                    : 'Unavailable (Efficiencies required)'}
+                </div>
+                <div className="metric-sub">
+                  {drivetrain.generatorShaftRPM !== null
+                    ? `Generator Shaft: ${Math.round(drivetrain.generatorShaftRPM)} RPM (90:1 Gearbox) | Combined Eff: ${((drivetrain.generatorShaftRPM > 0 && electrical.combinedEfficiency) ? (electrical.combinedEfficiency * 100).toFixed(1) : 0)}%`
+                    : 'Generator speed unverified'}
+                </div>
+              </div>
+            </div>
+
+            {/* Formula Step-by-Step Transparency Box */}
+            <div className="sim-formula-breakdown">
+              <div className="sim-formula-title">Live Mathematical Evaluation</div>
+              <div className="sim-formula-items">
+                <div className="sim-formula-item">
+                  <span className="sim-f-name">P_wind:</span>
+                  <span className="sim-f-code">0.5 * {airDensity.toFixed(3)} * {Math.round(geometry.sweptArea_m2)} m² * ({windSpeed.toFixed(1)})³ = {aerodynamics.availableWindPower_kW.toFixed(1)} kW</span>
+                </div>
+                {aerodynamics.mechanicalPower_kW !== null && (
+                  <div className="sim-formula-item">
+                    <span className="sim-f-name">P_mech:</span>
+                    <span className="sim-f-code">{aerodynamics.availableWindPower_kW.toFixed(1)} kW * {aerodynamics.cp} = {aerodynamics.mechanicalPower_kW.toFixed(1)} kW</span>
+                  </div>
+                )}
+                {electrical.electricalPower_W !== null && (
+                  <div className="sim-formula-item">
+                    <span className="sim-f-name">P_elec:</span>
+                    <span className="sim-f-code">{aerodynamics.mechanicalPower_kW.toFixed(1)} kW * 0.95 * 0.94 = {(electrical.electricalPower_W / 1000).toFixed(1)} kW</span>
+                  </div>
+                )}
+              </div>
+            </div>
 
             {/* Engineering Integrity Notice */}
             <div className="sim-integrity-notice">
               <span className="notice-icon">i</span>
               <p>
-                <strong>Educational Model Notice:</strong> These results represent theoretical aerodynamic and electromechanical conversion for a 3-blade geared HAWT. Calculations reflect quasi-steady kinematic equations and educational assumptions, not physical predictions for a specific commercial turbine.
+                <strong>Educational Model Notice:</strong> These results represent theoretical aerodynamic and electromechanical conversion for a 3-blade geared HAWT computed locally in-browser. Calculations reflect quasi-steady kinematic equations and educational assumptions with zero network calls.
               </p>
             </div>
           </div>

@@ -62,12 +62,32 @@ export default function Navbar({ currentPage, activeSection, onNavigate, onRepla
             <li>
               <button 
                 type="button"
-                className={`nav-link-btn ${isExploreActive ? 'active' : ''}`}
+                className={`nav-link-btn ${currentPage === 'explore-windmills' ? 'active' : ''}`}
                 onClick={() => handleNavClick('explore-windmills')}
-                aria-current={isExploreActive ? 'page' : undefined}
+                aria-current={currentPage === 'explore-windmills' ? 'page' : undefined}
               >
                 Explore Windmills
                 <span className="nav-badge-tag">3D Catalog</span>
+              </button>
+            </li>
+            <li>
+              <button 
+                type="button"
+                className={`nav-link-btn ${currentPage === 'advanced-turbine-tech' ? 'active' : ''}`}
+                onClick={() => handleNavClick('advanced-turbine-tech')}
+                aria-current={currentPage === 'advanced-turbine-tech' ? 'page' : undefined}
+              >
+                Advanced Turbine Tech
+              </button>
+            </li>
+            <li>
+              <button 
+                type="button"
+                className={`nav-link-btn ${currentPage === 'study-material' ? 'active' : ''}`}
+                onClick={() => handleNavClick('study-material')}
+                aria-current={currentPage === 'study-material' ? 'page' : undefined}
+              >
+                Study Material
               </button>
             </li>
             <li>
@@ -91,19 +111,8 @@ export default function Navbar({ currentPage, activeSection, onNavigate, onRepla
           </ul>
         </nav>
 
-        {/* Right CTA Button */}
+        {/* Right Actions: Mobile Toggle Button */}
         <div className="nav-right-actions">
-          <button
-            type="button"
-            className="nav-cta-btn"
-            onClick={() => handleNavClick('explore-windmills')}
-          >
-            <span>Turbine Catalog</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M5 12H19M19 12L12 5M19 12L12 19" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-
           {/* Mobile Menu Toggle Button */}
           <button 
             type="button"
@@ -134,11 +143,29 @@ export default function Navbar({ currentPage, activeSection, onNavigate, onRepla
             <li>
               <button
                 type="button"
-                className={`mobile-menu-btn ${isExploreActive ? 'active' : ''}`}
+                className={`mobile-menu-btn ${currentPage === 'explore-windmills' ? 'active' : ''}`}
                 onClick={() => handleNavClick('explore-windmills')}
               >
                 <span>Explore Windmills</span>
                 <span className="nav-badge-tag">3D Catalog</span>
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                className={`mobile-menu-btn ${currentPage === 'advanced-turbine-tech' ? 'active' : ''}`}
+                onClick={() => handleNavClick('advanced-turbine-tech')}
+              >
+                <span>Advanced Turbine Tech</span>
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                className={`mobile-menu-btn ${currentPage === 'study-material' ? 'active' : ''}`}
+                onClick={() => handleNavClick('study-material')}
+              >
+                <span>Study Material</span>
               </button>
             </li>
             <li>

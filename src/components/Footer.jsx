@@ -51,6 +51,24 @@ export default function Footer({ onNavigate }) {
                   <button
                     type="button"
                     className="footer-link-btn"
+                    onClick={() => onNavigate('advanced-turbine-tech')}
+                  >
+                    Advanced Turbine Tech
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    className="footer-link-btn"
+                    onClick={() => onNavigate('study-material')}
+                  >
+                    Study Material & Papers
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    className="footer-link-btn"
                     onClick={() => onNavigate('learn')}
                   >
                     Turbine Mechanics

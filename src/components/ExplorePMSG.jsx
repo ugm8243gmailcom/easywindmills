@@ -16,6 +16,9 @@ export default function ExplorePMSG() {
   // When video loads metadata
   const handleLoadedMetadata = () => {
     setVideoLoaded(true);
+    if (videoRef.current) {
+      videoRef.current.playbackRate = 1.5; // Increases the speed of bursting of the generator by 0.5s
+    }
   };
 
   // Video time update listener
@@ -23,8 +26,8 @@ export default function ExplorePMSG() {
     const video = videoRef.current;
     if (!video) return;
 
-    // Check if reached end of explosion
-    if (video.duration && video.currentTime >= video.duration - 0.25) {
+    // Check if reached end of explosion (completes crisply and quickly)
+    if (video.duration && video.currentTime >= video.duration - 0.2) {
       setIsExploded(true);
       setIsPlaying(false);
     }
@@ -37,6 +40,7 @@ export default function ExplorePMSG() {
     const video = videoRef.current;
     if (video) {
       video.currentTime = 0;
+      video.playbackRate = 1.5; // Increased burst speed
       const playPromise = video.play();
       if (playPromise !== undefined) {
         playPromise
@@ -87,6 +91,7 @@ export default function ExplorePMSG() {
       setIsPlaying(false);
     } else {
       setSelectedPart(null);
+      video.playbackRate = 1.5;
       if (video.duration && video.currentTime >= video.duration - 0.3) {
         video.currentTime = 0;
         setIsExploded(false);

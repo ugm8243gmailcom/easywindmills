@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <rect width="800" height="450" fill="#06131F"/>
+  <defs>
+    <pattern id="seaGrid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M 25 0 L 0 0 0 25" fill="none" stroke="#0C2A44" stroke-width="0.5"/>
+    </pattern>
+    <linearGradient id="waterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0A3150" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#041525"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#seaGrid)"/>
+  
+  <!-- Sea water level -->
+  <rect x="0" y="270" width="800" height="180" fill="url(#waterGrad)"/>
+  <line x1="0" y1="270" x2="800" y2="270" stroke="#0284C7" stroke-width="2"/>
+
+  <!-- Floating Spar Buoy with Mooring -->
+  <!-- Mooring Lines -->
+  <line x1="390" y1="340" x2="180" y2="430" stroke="#38BDF8" stroke-width="2" stroke-dasharray="4,3"/>
+  <line x1="410" y1="340" x2="620" y2="430" stroke="#38BDF8" stroke-width="2" stroke-dasharray="4,3"/>
+  <text x="160" y="440" fill="#38BDF8" font-family="sans-serif" font-size="10">Taut Catenary Mooring</text>
+  
+  <!-- Submerged Buoy -->
+  <rect x="385" y="250" width="30" height="110" rx="6" fill="#0284C7" stroke="#38BDF8" stroke-width="1.5"/>
+  <circle cx="400" cy="310" r="8" fill="#F59E0B"/>
+
+  <!-- Tilted Mast (Angled 18 degrees) -->
+  <g transform="rotate(18, 400, 260)">
+    <!-- Mast -->
+    <rect x="394" y="70" width="12" height="190" fill="#CBD5E1" stroke="#94A3B8" stroke-width="1"/>
+    <!-- Hub -->
+    <circle cx="400" cy="70" r="14" fill="#0284C7" stroke="#38BDF8" stroke-width="2"/>
+    <!-- Dual Blade Array (V-shape / Two-bladed teeter) -->
+    <path d="M 400 70 L 220 20 L 230 10 Z" fill="#38BDF8" stroke="#7DD3FC" stroke-width="1"/>
+    <path d="M 400 70 L 580 20 L 570 10 Z" fill="#38BDF8" stroke="#7DD3FC" stroke-width="1"/>
+  </g>
+
+  <!-- Title & Specs -->
+  <text x="40" y="45" fill="#F8FAFC" font-family="sans-serif" font-size="16" font-weight="700">TOUCHWIND TILTING MONO-ROTOR (6 MW)</text>
+  <text x="40" y="67" fill="#38BDF8" font-family="sans-serif" font-size="12">Rotterdam / North Sea Deep-Water Tilting Platform Prototype</text>
+
+  <rect x="40" y="100" width="230" height="75" rx="4" fill="#0B1E32" stroke="#1E3A5F" stroke-width="1"/>
+  <text x="50" y="122" fill="#E2E8F0" font-family="sans-serif" font-size="11" font-weight="600">Passive Inverted-Pendulum Tilting</text>
+  <text x="50" y="140" fill="#94A3B8" font-family="sans-serif" font-size="10">Operating Pitch Tilt: 0° to 25° with wind</text>
+  <text x="50" y="155" fill="#94A3B8" font-family="sans-serif" font-size="10">Turbine Capacity: 6 MW - 12 MW Scalable</text>
+  <text x="50" y="168" fill="#38BDF8" font-family="sans-serif" font-size="10">Eliminates pitch bearings; direct spar load path</text>
+</svg>
